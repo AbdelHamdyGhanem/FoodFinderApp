@@ -13,8 +13,6 @@ import java.util.HashMap;
 
 public class ApiTime extends AppCompatActivity {
 
-    // This is going to be changed to send this data to an API instead of printing it to the screen
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,28 +21,32 @@ public class ApiTime extends AppCompatActivity {
 
         Intent intent = getIntent();
         ArrayList<String> selectedFoods = intent.getStringArrayListExtra("foods");
-        HashMap<String, Boolean> foodPreferences = (HashMap<String, Boolean>) intent.getSerializableExtra("preferences");
+        HashMap<String, Object> foodPreferences = (HashMap<String, Object>) intent.getSerializableExtra("preferences");
 
         TextView textView = findViewById(R.id.showData);
 
-        // Display the foods
-        StringBuilder foodsStringBuilder = new StringBuilder("Selected Foods:\n");
-        if (selectedFoods != null) {
+        StringBuilder displayStringBuilder = new StringBuilder("Selected Foods:\n");
+        if (selectedFoods != null && !selectedFoods.isEmpty()) {
             for (String food : selectedFoods) {
-                foodsStringBuilder.append(food).append("\n");
+                displayStringBuilder.append(food).append("\n");
             }
+        } else {
+            displayStringBuilder.append("No foods selected.\n");
         }
-        foodsStringBuilder.append("\nFood Preferences:\n");
 
-        // Display the preferences
+        displayStringBuilder.append("\nFood Preferences:\n");
+
         if (foodPreferences != null) {
-            for (String key : foodPreferences.keySet()) {
-                if (Boolean.TRUE.equals(foodPreferences.get(key))) {
-                    foodsStringBuilder.append(key).append("\n");
-                }
-            }
+            String numberOfRecipes = (String) foodPreferences.get("numberOfRecipes");
+            displayStringBuilder.append("Number of Recipes: ").append(numberOfRecipes).append("\n");
+
+            Boolean maximizeIngredients = (Boolean) foodPreferences.get("maximizeIngredients");
+            Boolean ignorePantry = (Boolean) foodPreferences.get("ignorePantry");
+
+            displayStringBuilder.append("Maximize Ingredients: ").append(maximizeIngredients ? "Yes" : "No").append("\n");
+            displayStringBuilder.append("Ignore Pantry: ").append(ignorePantry ? "Yes" : "No").append("\n");
         }
 
-        textView.setText(foodsStringBuilder.toString());
+        textView.setText(displayStringBuilder.toString());
     }
 }

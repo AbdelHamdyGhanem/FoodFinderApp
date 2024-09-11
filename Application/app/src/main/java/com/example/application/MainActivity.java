@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     // Initialize variables
-    private EditText editText;
+    private EditText AddFood;
     private ArrayList<String> arrayList;
     private ArrayAdapter<String> adapter;
 
@@ -24,12 +24,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize views
-        editText = findViewById(R.id.editText);
+        AddFood = findViewById(R.id.AddFood);
         Button buttonAdd = findViewById(R.id.button_add);
         ListView listView = findViewById(R.id.listView);
 
-        // Initialize list and adapter
         arrayList = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(adapter);
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up button click listener
         buttonAdd.setOnClickListener(v -> addFood());
 
-        // Navigates the user to the next activity
         Button button_next_foodPref = findViewById(R.id.button_next_foodPref);
         button_next_foodPref.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,20 +48,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addFood() {
-        // Get text from EditText
-        String food = editText.getText().toString().trim();
+        String food = AddFood.getText().toString().trim();
 
-        // Check if the text is not empty
         if (!food.isEmpty() && !arrayList.contains(food)) {
-            // Add item to list and update ListView
             arrayList.add(food);
             adapter.notifyDataSetChanged();
-            // Clear the EditText
-            editText.setText("");
-            // Show confirmation toast
+            AddFood.setText("");
             Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show();
         } else {
-            // Show error toast if EditText is empty or food item already exists
             Toast.makeText(this, "Item is empty or already exists", Toast.LENGTH_SHORT).show();
         }
     }
