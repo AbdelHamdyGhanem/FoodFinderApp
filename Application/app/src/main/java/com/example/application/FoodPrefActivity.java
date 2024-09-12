@@ -32,6 +32,7 @@ public class FoodPrefActivity extends AppCompatActivity {
         numberofRecipes = findViewById(R.id.number_of_recipes);
         maximizeIngredients = findViewById(R.id.maximizeIngredients);
         ignorePantry = findViewById(R.id.ignorePantry);
+        arrayList = getIntent().getStringArrayListExtra("foods");
 
         HashMap<Integer, Object> preferences = new HashMap<>();
 
