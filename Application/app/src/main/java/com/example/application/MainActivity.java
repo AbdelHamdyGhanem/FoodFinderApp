@@ -55,8 +55,11 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             AddFood.setText("");
             Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show();
-        } else {
+        } else if(food == " "){
             Toast.makeText(this, "Item is empty or already exists", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
         }
     }
 }

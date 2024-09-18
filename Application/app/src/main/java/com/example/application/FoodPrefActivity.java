@@ -28,6 +28,7 @@ public class FoodPrefActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         Button button_next_API = findViewById(R.id.button_next_API);
+        Button button_previous = findViewById(R.id.button_prev_foodPref);
 
         numberofRecipes = findViewById(R.id.number_of_recipes);
         maximizeIngredients = findViewById(R.id.maximizeIngredients);
@@ -41,6 +42,15 @@ public class FoodPrefActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 passDataToApiTime();
+            }
+        });
+
+        button_previous.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         });
     }
