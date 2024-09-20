@@ -23,7 +23,7 @@ public class ApiTime extends AppCompatActivity {
 
     private TextView textView;
     private StringBuilder displayStringBuilder;
-    private  String numberOfRecipes;
+    private String numberOfRecipes;
     private int maximizeIngredients;
     private boolean ignorePantry;
     private ArrayList<String> selectedFoods;
@@ -34,6 +34,7 @@ public class ApiTime extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_api_time);
+
         Button button_home = findViewById(R.id.button_home);
         button_home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,17 +65,8 @@ public class ApiTime extends AppCompatActivity {
             numberOfRecipes = (String) foodPreferences.get("numberOfRecipes");
             displayStringBuilder.append("Number of Recipes: ").append(numberOfRecipes).append("\n");
 
-            if(foodPreferences.get("maximizeIngredients") == "Yes"){
-                maximizeIngredients = 2;
-            }
-            else
-                maximizeIngredients = 1;
-
-            if(foodPreferences.get("ignorePantry") == "No"){
-                ignorePantry = true;
-            }
-            else
-                ignorePantry = false;
+            maximizeIngredients = foodPreferences.get("maximizeIngredients").equals("Yes") ? 2 : 1;
+            ignorePantry = foodPreferences.get("ignorePantry").equals("No");
 
             displayStringBuilder.append("Maximize Ingredients: ").append(maximizeIngredients).append("\n");
             displayStringBuilder.append("Ignore Pantry: ").append(ignorePantry ? "No" : "Yes").append("\n\n--------------------------------------------------------------------\n");
@@ -90,7 +82,7 @@ public class ApiTime extends AppCompatActivity {
                 try {
                     String ingredients = String.join(",", selectedFoods);
                     URL url = new URL("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=" + URLEncoder.encode(ingredients, "UTF-8")
-                            + "&number=" + numberOfRecipes +"&ignorePantry="+ ignorePantry + "&ranking="+ maximizeIngredients);
+                            + "&number=" + numberOfRecipes + "&ignorePantry=" + ignorePantry + "&ranking=" + maximizeIngredients);
 
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("GET");
@@ -112,7 +104,6 @@ public class ApiTime extends AppCompatActivity {
                             String title = recipe.getString("title");
                             JSONArray usedIngredients = recipe.getJSONArray("usedIngredients");
                             displayStringBuilder.append("Recipe:\nTitle: ").append(title).append("\n\n");
-                            //displayStringBuilder.append("Used Ingredients: ").append(usedIngredients.toString()).append("\n\n");
                         }
                     } else {
                         displayStringBuilder.append("Fail 1");
@@ -135,7 +126,12 @@ public class ApiTime extends AppCompatActivity {
             }
         }).start();
 
-
         return " ";
+    }
+
+    // Add this method for the "Next" button click
+    public void selectFood(View view) {
+        Intent intent = new Intent(ApiTime.this, scrollFood.class);
+        startActivity(intent);
     }
 }
