@@ -9,13 +9,20 @@
         android:id="@+id/hi_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Here we want to show the the list fo foods you can double
-         press to get options you can delete, add to favourite foods"
-        android:textSize="24sp"/>
+        android:text="Selected Foods"
+        android:textSize="24sp" />
 
-    <ListView
-        android:id="@+id/listViewMeals"
+    <LinearLayout
+        android:id="@+id/foodContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/button_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
         android:layout_marginTop="16dp" />
+
 </LinearLayout>

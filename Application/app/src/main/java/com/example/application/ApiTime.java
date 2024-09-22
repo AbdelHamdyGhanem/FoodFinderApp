@@ -2,32 +2,34 @@ package com.example.application;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.net.URLEncoder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ApiTime extends AppCompatActivity {
 
-    private TextView textView;
-    private StringBuilder displayStringBuilder;
-    private String numberOfRecipes;
-    private int maximizeIngredients;
-    private boolean ignorePantry;
+    private LinearLayout foodContainer;
     private ArrayList<String> selectedFoods;
     private HashMap<String, Object> foodPreferences;
+    private String numberOfRecipes;
+    private boolean ignorePantry;
+    private int maximizeIngredients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,47 +37,19 @@ public class ApiTime extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_api_time);
 
-        Button button_home = findViewById(R.id.button_home);
-        button_home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
         Intent intent = getIntent();
         selectedFoods = intent.getStringArrayListExtra("foods");
         foodPreferences = (HashMap<String, Object>) intent.getSerializableExtra("preferences");
 
-        textView = findViewById(R.id.showData);
+        foodContainer = findViewById(R.id.foodContainer);
+        numberOfRecipes = (String) foodPreferences.get("numberOfRecipes");
+        maximizeIngredients = foodPreferences.get("maximizeIngredients").equals("Yes") ? 2 : 1;
+        ignorePantry = foodPreferences.get("ignorePantry").equals("No");
 
-        displayStringBuilder = new StringBuilder("Selected Foods:\n");
-        if (selectedFoods != null && !selectedFoods.isEmpty()) {
-            for (String food : selectedFoods) {
-                displayStringBuilder.append(food).append("\n");
-            }
-        } else {
-            displayStringBuilder.append("No foods selected.\n");
-        }
-
-        displayStringBuilder.append("\nFood Preferences:\n");
-
-        if (foodPreferences != null) {
-            numberOfRecipes = (String) foodPreferences.get("numberOfRecipes");
-            displayStringBuilder.append("Number of Recipes: ").append(numberOfRecipes).append("\n");
-
-            maximizeIngredients = foodPreferences.get("maximizeIngredients").equals("Yes") ? 2 : 1;
-            ignorePantry = foodPreferences.get("ignorePantry").equals("No");
-
-            displayStringBuilder.append("Maximize Ingredients: ").append(maximizeIngredients).append("\n");
-            displayStringBuilder.append("Ignore Pantry: ").append(ignorePantry ? "No" : "Yes").append("\n\n--------------------------------------------------------------------\n");
-        }
-
-        String data = sendData();
+        sendData();
     }
 
-    public String sendData() {
+    public void sendData() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -99,37 +73,61 @@ public class ApiTime extends AppCompatActivity {
                         }
                         in.close();
                         JSONArray jsonArray = new JSONArray(content.toString());
-                        for (int i = 0; i < Integer.parseInt(numberOfRecipes); i++) {
-                            JSONObject recipe = jsonArray.getJSONObject(i);
-                            String title = recipe.getString("title");
-                            JSONArray usedIngredients = recipe.getJSONArray("usedIngredients");
-                            displayStringBuilder.append("Recipe:\nTitle: ").append(title).append("\n\n");
-                        }
+                        runOnUiThread(() -> displayFoodItems(jsonArray));
                     } else {
-                        displayStringBuilder.append("Fail 1");
+                        Log.e("API Error", "Response Code: " + responseCode);
                     }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            textView.setText(displayStringBuilder.toString());
-                        }
-                    });
                 } catch (Exception e) {
-                    displayStringBuilder.append(e.toString());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            textView.setText(displayStringBuilder.toString());
-                        }
-                    });
+                    Log.e("Error", e.toString());
                 }
             }
         }).start();
-
-        return " ";
     }
 
-    // Add this method for the "Next" button click
+    private void displayFoodItems(JSONArray jsonArray) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject recipe = jsonArray.getJSONObject(i);
+                String title = recipe.getString("title");
+                String description = recipe.optString("description", "No description available.");
+
+                // Inflate the card layout
+                View cardView = getLayoutInflater().inflate(R.layout.card_layout, null);
+                TextView foodName = cardView.findViewById(R.id.foodName);
+                TextView foodDescription = cardView.findViewById(R.id.foodDescription);
+                TextView favoriteIcon = cardView.findViewById(R.id.favoriteIcon); // Make sure this is a TextView
+
+                foodName.setText(title);
+                foodDescription.setText(description);
+
+                // Initially set the heart emoji as unfilled
+                favoriteIcon.setText("♡"); // Empty heart
+                favoriteIcon.setTag(false); // Tag to track filled state
+
+                // Set click listener for the heart emoji
+                favoriteIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        boolean isFavorite = (boolean) v.getTag();
+                        if (!isFavorite) {
+                            ((TextView) v).setText("❤️"); // Filled heart
+                            v.setTag(true); // Update tag to filled
+                            Toast.makeText(ApiTime.this, title + " has been added to the favorites tab", Toast.LENGTH_SHORT).show();
+                        } else {
+                            ((TextView) v).setText("♡"); // Back to empty heart
+                            v.setTag(false); // Update tag to unfilled
+                            Toast.makeText(ApiTime.this, title + " has been removed from favorites", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                foodContainer.addView(cardView);
+            } catch (Exception e) {
+                Log.e("JSON Parsing Error", e.toString());
+            }
+        }
+    }
+
     public void selectFood(View view) {
         Intent intent = new Intent(ApiTime.this, scrollFood.class);
         startActivity(intent);
