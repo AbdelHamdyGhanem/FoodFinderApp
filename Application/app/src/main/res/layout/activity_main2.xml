@@ -7,63 +7,56 @@
     android:layout_height="match_parent"
     tools:context=".FoodPrefActivity">
 
-
     <EditText
         android:id="@+id/number_of_recipes"
-        android:layout_width="375dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="176dp"
-        android:autofillHints=""
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:hint="Number of recipes (optional, default: 5)"
-        android:inputType="text"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.166"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_next_API"
-        android:layout_width="106dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="912dp"
-        android:text="Next"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.798"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_prev_foodPref"
-        android:layout_width="106dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="912dp"
-        android:text="Previous"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.169"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"/>
 
     <Switch
         android:id="@+id/maximizeIngredients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="268dp"
+        android:layout_marginTop="16dp"
         android:text="Maximize Used Ingredients"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toBottomOf="@id/number_of_recipes"/>
 
     <Switch
         android:id="@+id/ignorePantry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="228dp"
-        android:text="IgnorePantry"
+        android:layout_marginTop="16dp"
+        android:text="Ignore Pantry"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toBottomOf="@id/maximizeIngredients"/>
 
+    <Button
+        android:id="@+id/button_prev_foodPref"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Previous"
+        app:layout_constraintEnd_toStartOf="@id/button_next_API"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ignorePantry"
+        app:layout_constraintWidth_percent="0.4"/>
+
+    <Button
+        android:id="@+id/button_next_API"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/button_prev_foodPref"
+        app:layout_constraintTop_toBottomOf="@id/ignorePantry"
+        app:layout_constraintWidth_percent="0.4"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -54,4 +54,5 @@ class FoodPrefActivity : AppCompatActivity() {
         intent.putExtra("preferences", preferences)
         startActivity(intent)
     }
+
 }
