@@ -23,6 +23,7 @@ class ApiTime : AppCompatActivity() {
     private var numberOfRecipes: String? = null
     private var ignorePantry = false
     private var maximizeIngredients = 0
+    private val favoritesList = mutableListOf<String>() // List to store favorites
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +42,7 @@ class ApiTime : AppCompatActivity() {
         sendData()
     }
 
-    fun sendData() {
+    private fun sendData() {
         Thread {
             try {
                 val ingredients = java.lang.String.join(",", selectedFoods)
@@ -49,8 +50,7 @@ class ApiTime : AppCompatActivity() {
                     "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=" + URLEncoder.encode(
                         ingredients,
                         "UTF-8"
-                    )
-                            + "&number=" + numberOfRecipes + "&ignorePantry=" + ignorePantry + "&ranking=" + maximizeIngredients
+                    ) + "&number=" + numberOfRecipes + "&ignorePantry=" + ignorePantry + "&ranking=" + maximizeIngredients
                 )
 
                 val conn = url.openConnection() as HttpURLConnection
@@ -67,9 +67,9 @@ class ApiTime : AppCompatActivity() {
                 val responseCode = conn.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     val `in` = BufferedReader(InputStreamReader(conn.inputStream))
-                    var inputLine: String?
                     val content = StringBuilder()
-                    while ((`in`.readLine().also { inputLine = it }) != null) {
+                    var inputLine: String?
+                    while (`in`.readLine().also { inputLine = it } != null) {
                         content.append(inputLine)
                     }
                     `in`.close()
@@ -95,8 +95,7 @@ class ApiTime : AppCompatActivity() {
                 val cardView = layoutInflater.inflate(R.layout.card_layout, null)
                 val foodName = cardView.findViewById<TextView>(R.id.foodName)
                 val foodDescription = cardView.findViewById<TextView>(R.id.foodDescription)
-                val favoriteIcon =
-                    cardView.findViewById<TextView>(R.id.favoriteIcon) // Make sure this is a TextView
+                val favoriteIcon = cardView.findViewById<TextView>(R.id.favoriteIcon) // Make sure this is a TextView
 
                 foodName.text = title
                 foodDescription.text = description
@@ -107,30 +106,38 @@ class ApiTime : AppCompatActivity() {
 
                 // Set click listener for the heart emoji
                 favoriteIcon.setOnClickListener { v ->
-                    val isFavorite = v.tag as Boolean
-                    if (!isFavorite) {
-                        (v as TextView).text = "❤️" // Filled heart
-                        v.setTag(true) // Update tag to filled
-                        Toast.makeText(
-                            this@ApiTime,
-                            "$title has been added to the favorites tab",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        (v as TextView).text = "♡" // Back to empty heart
-                        v.setTag(false) // Update tag to unfilled
-                        Toast.makeText(
-                            this@ApiTime,
-                            "$title has been removed from favorites",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    toggleFavorite(v as TextView, title)
+                }
+
+                // Add double-click listener to the card
+                var lastClickTime: Long = 0
+                cardView.setOnClickListener {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastClickTime < 300) { // 300 ms for double-click detection
+                        toggleFavorite(favoriteIcon, title)
                     }
+                    lastClickTime = currentTime
                 }
 
                 foodContainer!!.addView(cardView)
             } catch (e: Exception) {
                 Log.e("JSON Parsing Error", e.toString())
             }
+        }
+    }
+
+    private fun toggleFavorite(favoriteIcon: TextView, title: String) {
+        val isFavorite = favoriteIcon.tag as Boolean
+        if (!isFavorite) {
+            favoriteIcon.text = "❤️" // Filled heart
+            favoriteIcon.tag = true // Update tag to filled
+            favoritesList.add(title)
+            Toast.makeText(this, "$title has been added to your favorites", Toast.LENGTH_SHORT).show()
+        } else {
+            favoriteIcon.text = "♡" // Back to empty heart
+            favoriteIcon.tag = false // Update tag to unfilled
+            favoritesList.remove(title)
+            Toast.makeText(this, "$title has been removed from favorites", Toast.LENGTH_SHORT).show()
         }
     }
 
