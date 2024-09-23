@@ -35,11 +35,23 @@
         android:id="@+id/button_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_marginTop="24dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
         android:backgroundTint="#FF6200EE"
-        android:textColor="#FFFFFF"
+        android:onClick="selectFood"
         android:padding="12dp"
-        android:onClick="selectFood" />
+        android:text="Back"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/button_show_favorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#FF6200EE"
+        android:onClick="showFavorites"
+        android:padding="12dp"
+        android:text="Show Favorites"
+        android:textColor="#FFFFFF" />
 </LinearLayout>

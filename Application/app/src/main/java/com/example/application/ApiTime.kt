@@ -141,8 +141,8 @@ class ApiTime : AppCompatActivity() {
         }
     }
 
-    fun selectFood(view: View?) {
-        val intent = Intent(this@ApiTime, scrollFood::class.java)
-        startActivity(intent)
+    fun showFavorites(view: View) {
+        Toast.makeText(this, "Showing favorites: ${favoritesList.joinToString()}", Toast.LENGTH_SHORT).show()
     }
+
 }
