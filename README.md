@@ -1,6 +1,4 @@
 sitrep:
-we are missing:
-1. adding function so the user can see their favourite foods
-2. adding user can see desacription of food in cards
-
-thise are the main things now
+we are missing the following:
+1. adding a function so the user can see their favorite foods
+2. adding a picture to each card and also showing usedIngredientCount and missedIngredientCount and id
