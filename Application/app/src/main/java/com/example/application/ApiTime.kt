@@ -116,7 +116,6 @@ class ApiTime : AppCompatActivity() {
             try {
                 val recipe = jsonArray.getJSONObject(i)
                 val title = recipe.getString("title")
-                val description = recipe.optString("description", "No description available.")
 
                 val cardView = layoutInflater.inflate(R.layout.card_layout, null)
                 val foodName = cardView.findViewById<TextView>(R.id.foodName)
@@ -124,7 +123,6 @@ class ApiTime : AppCompatActivity() {
                 val favoriteIcon = cardView.findViewById<TextView>(R.id.favoriteIcon)
 
                 foodName.text = title
-                foodDescription.text = description
 
                 cardView.setOnTouchListener { v, event ->
                     gestureDetector.onTouchEvent(event)
