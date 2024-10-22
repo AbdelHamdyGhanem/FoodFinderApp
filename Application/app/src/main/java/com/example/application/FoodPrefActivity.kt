@@ -2,6 +2,8 @@ package com.example.application
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
@@ -27,8 +29,6 @@ class FoodPrefActivity : AppCompatActivity() {
         ignorePantry = findViewById(R.id.ignorePantry)
         arrayList = intent.getStringArrayListExtra("foods")
 
-        val preferences = HashMap<Int, Any>()
-
         // pass data
         button_next_API.setOnClickListener { passDataToApiTime() }
 
@@ -49,10 +49,14 @@ class FoodPrefActivity : AppCompatActivity() {
         preferences["maximizeIngredients"] = maximizeIngredients
         preferences["ignorePantry"] = ignorePantry
 
-        val intent = Intent(this, ApiTime::class.java)
-        intent.putExtra("foods", arrayList)
-        intent.putExtra("preferences", preferences)
-        startActivity(intent)
+        setContentView(R.layout.activity_timeout)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            val intent = Intent(this, ApiTime::class.java)
+            intent.putExtra("foods", arrayList)
+            intent.putExtra("preferences", preferences)
+            startActivity(intent)
+        }, 3000)
     }
 
 }
