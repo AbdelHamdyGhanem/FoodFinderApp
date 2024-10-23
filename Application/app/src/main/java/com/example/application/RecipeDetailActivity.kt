@@ -1,6 +1,8 @@
 package com.example.application
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +34,13 @@ class RecipeDetailActivity : AppCompatActivity() {
 
         // Load the image using Picasso or Glide (Picasso is used here for simplicity)
         Picasso.get().load(imageUrl).into(recipeImageView)
+
+        val backButton = findViewById<Button>(R.id.button)
+        backButton.setOnClickListener {
+            val intent = Intent(applicationContext, ApiTime::class.java)
+            startActivity(intent)
+        }
+
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
 //            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
