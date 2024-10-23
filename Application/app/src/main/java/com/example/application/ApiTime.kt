@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONArray
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -116,6 +117,8 @@ class ApiTime : AppCompatActivity() {
             try {
                 val recipe = jsonArray.getJSONObject(i)
                 val title = recipe.getString("title")
+                val recipeId = recipe.getInt("id")
+                val imageUrl = recipe.getString("image")
 
                 val cardView = layoutInflater.inflate(R.layout.card_layout, null)
                 val foodName = cardView.findViewById<TextView>(R.id.foodName)
@@ -124,15 +127,9 @@ class ApiTime : AppCompatActivity() {
 
                 foodName.text = title
 
-                cardView.setOnTouchListener { v, event ->
-                    gestureDetector.onTouchEvent(event)
-                    v.performClick()
-
-                    if (event.action == MotionEvent.ACTION_UP) {
-                        v.postDelayed({
-                        }, 200)
-                    }
-                    true
+                // Set click listener for the card to open RecipeDetailActivity
+                cardView.setOnClickListener {
+                    fetchRecipeDetails(recipeId, title, imageUrl)
                 }
 
                 favoriteIcon.text = "♡"
@@ -150,6 +147,82 @@ class ApiTime : AppCompatActivity() {
             }
         }
     }
+
+    private fun fetchRecipeDetails(recipeId: Int, title: String, imageUrl: String) {
+        Thread {
+            try {
+                // Construct the API URL to get detailed recipe information
+                val url = URL("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/$recipeId/information")
+
+                // Open a connection to the API
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.setRequestProperty(
+                    "x-rapidapi-key",
+                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                )
+                conn.setRequestProperty(
+                    "x-rapidapi-host",
+                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                )
+
+                // Check if the response code is HTTP OK (200)
+                val responseCode = conn.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Read the response from the API
+                    val reader = BufferedReader(InputStreamReader(conn.inputStream))
+                    val content = StringBuilder()
+                    var inputLine: String?
+                    while (reader.readLine().also { inputLine = it } != null) {
+                        content.append(inputLine)
+                    }
+                    reader.close()
+
+                    // Parse the response JSON object
+                    val jsonObject = JSONObject(content.toString())
+
+                    // Extract the recipe instructions and any other relevant data
+                    val instructions = jsonObject.optString("instructions", "Instructions not available")
+                    val ingredients = jsonObject.optJSONArray("extendedIngredients")
+                    val ingredientList = StringBuilder()
+
+                    // Check for ingredients array and iterate
+                    if (ingredients != null) {
+                        for (i in 0 until ingredients.length()) {
+                            val ingredient = ingredients.getJSONObject(i)
+                            // Safely check for "originalString" and append it
+                            val originalString = ingredient.optString("originalString", "No ingredient description")
+                            ingredientList.append(originalString).append("\n")
+                        }
+                    } else {
+                        ingredientList.append("No ingredients available")
+                    }
+
+//                    // Build a list of ingredients
+//                    for (i in 0 until ingredients.length()) {
+//                        val ingredient = ingredients.getJSONObject(i)
+//                        ingredientList.append(ingredient.getString("originalString")).append("\n")
+//                    }
+
+                    // Launch the RecipeDetailActivity to display the details
+                    runOnUiThread {
+                        val intent = Intent(this@ApiTime, RecipeDetailActivity::class.java)
+                        intent.putExtra("recipeTitle", title)
+                        intent.putExtra("recipeInstructions", instructions)
+                        intent.putExtra("ingredients", ingredientList.toString())
+                        intent.putExtra("imageUrl", imageUrl)
+                        startActivity(intent)
+                    }
+                } else {
+                    Log.e("API Error", "Response Code: $responseCode")
+                }
+            } catch (e: Exception) {
+                Log.e("Error", e.toString())
+            }
+            Log.d("Image URL", imageUrl)
+        }.start()
+    }
+
 
     private fun fetchNutritionData(foodTitle: String, foodDescription: TextView) {
         Thread {
