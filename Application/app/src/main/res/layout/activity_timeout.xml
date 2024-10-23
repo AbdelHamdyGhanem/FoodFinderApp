@@ -9,25 +9,29 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="406dp"
-        android:layout_height="408dp"
-        android:layout_gravity="center"
-        android:src="@mipmap/image_foreground"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_width="312dp"
+        android:layout_height="419dp"
+        android:layout_marginTop="30sp"
+        app:srcCompat="@mipmap/image_foreground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/textEdit"
+        />
 
     <EditText
-        android:id="@+id/editTextText"
-        android:layout_width="313dp"
-        android:layout_height="175dp"
+        android:id="@+id/textEdit"
+        android:layout_width="241dp"
+        android:layout_height="111dp"
         android:layout_gravity="center_horizontal|bottom"
         android:background="@android:color/transparent"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:text="gimme a minute bro"
         android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="416dp" />
-
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@id/imageView"
+        app:layout_constraintEnd_toEndOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="@id/imageView"
+        app:layout_constraintTop_toBottomOf="@id/imageView"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -93,9 +93,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResults(results: Bundle?) {
                 val data = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (data != null && data.isNotEmpty()) {
+                if (!data.isNullOrEmpty()) {
                     AddFood!!.setText(data[0])
-                    addFood() // Add recognized speech to the list
+                    addFood()
                 }
             }
 
