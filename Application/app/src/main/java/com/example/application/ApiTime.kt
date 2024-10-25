@@ -210,6 +210,8 @@ class ApiTime : AppCompatActivity() {
     }
 
     fun showFavorites(view: View) {
-        Toast.makeText(this, "Showing favorites: ${favoritesList.joinToString()}", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, FavoritesActivity::class.java)
+        intent.putStringArrayListExtra("favoritesList", ArrayList(favoritesList))
+        startActivity(intent)
     }
 }
