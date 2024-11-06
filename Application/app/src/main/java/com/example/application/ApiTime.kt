@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONArray
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -116,6 +117,8 @@ class ApiTime : AppCompatActivity() {
             try {
                 val recipe = jsonArray.getJSONObject(i)
                 val title = recipe.getString("title")
+                val recipeId = recipe.getInt("id")
+                val imageUrl = recipe.getString("image")
 
                 val cardView = layoutInflater.inflate(R.layout.card_layout, null)
                 val foodName = cardView.findViewById<TextView>(R.id.foodName)
@@ -124,15 +127,9 @@ class ApiTime : AppCompatActivity() {
 
                 foodName.text = title
 
-                cardView.setOnTouchListener { v, event ->
-                    gestureDetector.onTouchEvent(event)
-                    v.performClick()
-
-                    if (event.action == MotionEvent.ACTION_UP) {
-                        v.postDelayed({
-                        }, 200)
-                    }
-                    true
+                // Set click listener for the card to open RecipeDetailActivity
+                cardView.setOnClickListener {
+                    fetchRecipeDetails(recipeId, title, imageUrl)
                 }
 
                 favoriteIcon.text = "♡"
@@ -151,15 +148,99 @@ class ApiTime : AppCompatActivity() {
         }
     }
 
+    private fun fetchRecipeDetails(recipeId: Int, title: String, imageUrl: String) {
+        Thread {
+            try {
+                // Construct the API URL to get detailed recipe information
+                val url = URL("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/$recipeId/information")
+
+                // Open a connection to the API
+                val conn = url.openConnection() as HttpURLConnection
+                conn.requestMethod = "GET"
+                conn.setRequestProperty(
+                    "x-rapidapi-key",
+                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                )
+                conn.setRequestProperty(
+                    "x-rapidapi-host",
+                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                )
+
+                // Check if the response code is HTTP OK (200)
+                val responseCode = conn.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Read the response from the API
+                    val reader = BufferedReader(InputStreamReader(conn.inputStream))
+                    val content = StringBuilder()
+                    var inputLine: String?
+                    while (reader.readLine().also { inputLine = it } != null) {
+                        content.append(inputLine)
+                    }
+                    reader.close()
+
+                    // Parse the response JSON object
+                    val jsonObject = JSONObject(content.toString())
+
+                    // Extract the recipe instructions and any other relevant data
+                    val instructions = jsonObject.optString("instructions", "Instructions not available")
+                    val ingredients = jsonObject.optJSONArray("extendedIngredients")
+                    val ingredientList = StringBuilder()
+
+                    // Check for ingredients array and iterate
+                    if (ingredients != null) {
+                        for (i in 0 until ingredients.length()) {
+                            val ingredient = ingredients.getJSONObject(i)
+                            // Safely check for "originalString" and append it
+                            val originalString = ingredient.optString("originalString", "No ingredient description")
+                            ingredientList.append(originalString).append("\n")
+                        }
+                    } else {
+                        ingredientList.append("No ingredients available")
+                    }
+
+//                    // Build a list of ingredients
+//                    for (i in 0 until ingredients.length()) {
+//                        val ingredient = ingredients.getJSONObject(i)
+//                        ingredientList.append(ingredient.getString("originalString")).append("\n")
+//                    }
+
+                    // Launch the RecipeDetailActivity to display the details
+                    runOnUiThread {
+                        val intent = Intent(this@ApiTime, RecipeDetailActivity::class.java)
+                        intent.putExtra("recipeTitle", title)
+                        intent.putExtra("recipeInstructions", instructions)
+                        intent.putExtra("ingredients", ingredientList.toString())
+                        intent.putExtra("imageUrl", imageUrl)
+                        startActivity(intent)
+                    }
+                } else {
+                    Log.e("API Error", "Response Code: $responseCode")
+                }
+            } catch (e: Exception) {
+                Log.e("Error", e.toString())
+            }
+            Log.d("Image URL", imageUrl)
+        }.start()
+    }
+
+
     private fun fetchNutritionData(foodTitle: String, foodDescription: TextView) {
         Thread {
             try {
-                val apiUrl = "https://api.api-ninjas.com/v1/nutrition?query=" + URLEncoder.encode(foodTitle, "UTF-8")
-                val url = URL(apiUrl)
+                val url = URL(
+                    "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/guessNutrition?title=" + URLEncoder.encode(foodTitle, "UTF-8")
+                )
 
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
-                conn.setRequestProperty("X-Api-Key", "kLB2Kaq64UizpgnzYYxoiQ==fZSjgLIWhOmKqByu")
+                conn.setRequestProperty(
+                    "x-rapidapi-key",
+                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                )
+                conn.setRequestProperty(
+                    "x-rapidapi-host",
+                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                )
 
                 val responseCode = conn.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -170,23 +251,33 @@ class ApiTime : AppCompatActivity() {
                         content.append(inputLine)
                     }
                     `in`.close()
-
-                    val jsonArray = JSONArray(content.toString())
+                    val jsonObject = JSONObject(content.toString())
                     runOnUiThread {
-                        if (jsonArray.length() > 0) {
-                            val foodItem = jsonArray.getJSONObject(0)
-                            val calories = foodItem.optString("calories", "N/A")
-                            val fatTotal = foodItem.optString("fat_total_g", "N/A")
-                            val sugar = foodItem.optString("sugar_g", "N/A")
-                            val protein = foodItem.optString("protein_g", "N/A")
-
-                            foodDescription.text = "${foodDescription.text}\n\nCalories: $calories\nFat: $fatTotal g\nSugar: $sugar g\nProtein: $protein g"
+                        val calories = if (jsonObject.has("calories") && !jsonObject.isNull("calories")) {
+                            jsonObject.getJSONObject("calories").optString("value", "N/A")
                         } else {
-                            foodDescription.text = "${foodDescription.text}\n\nNutrition data not available."
+                            "N/A"
                         }
+                        val fatTotal = if (jsonObject.has("fat") && !jsonObject.isNull("fat")) {
+                            jsonObject.getJSONObject("fat").optString("value", "N/A")
+                        } else {
+                            "N/A"
+                        }
+                        val protein = if (jsonObject.has("protein") && !jsonObject.isNull("protein")) {
+                            jsonObject.getJSONObject("protein").optString("value", "N/A")
+                        } else {
+                            "N/A"
+                        }
+                        val carbs = if (jsonObject.has("carbs") && !jsonObject.isNull("carbs")) {
+                            jsonObject.getJSONObject("carbs").optString("value", "N/A")
+                        } else {
+                            "N/A"
+                        }
+
+                        foodDescription.text = "${foodDescription.text}\n\nCalories: $calories\nFat: $fatTotal g\nSugar: $carbs g\nProtein: $protein g"
                     }
                 } else {
-                    Log.e("Nutrition API Error", "Response Code: $responseCode")
+                    Log.e("API Error", "Response Code: $responseCode")
                 }
             } catch (e: Exception) {
                 Log.e("Error", e.toString())

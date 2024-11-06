@@ -10,11 +10,15 @@
         android:id="@+id/hi_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Food options from the API. Tap to delete or add to favorite."
-        android:textSize="20sp"
-        android:textColor="#333333"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="16dp"
+        android:text="Food options from the API. Tap to delete or add to favorite."
+        android:textColor="#333333"
+        android:textSize="20sp"
+        android:layout_marginTop="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/foodContainer"
         android:textStyle="bold" />
 
     <HorizontalScrollView
@@ -26,9 +30,9 @@
             android:id="@+id/foodContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center" />
+            android:padding="8dp" />
     </HorizontalScrollView>
 
     <Button
