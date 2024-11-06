@@ -227,12 +227,20 @@ class ApiTime : AppCompatActivity() {
     private fun fetchNutritionData(foodTitle: String, foodDescription: TextView) {
         Thread {
             try {
-                val apiUrl = "https://api.api-ninjas.com/v1/nutrition?query=" + URLEncoder.encode(foodTitle, "UTF-8")
-                val url = URL(apiUrl)
+                val url = URL(
+                    "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/guessNutrition?title=" + URLEncoder.encode(foodTitle, "UTF-8")
+                )
 
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
-                conn.setRequestProperty("X-Api-Key", "kLB2Kaq64UizpgnzYYxoiQ==fZSjgLIWhOmKqByu")
+                conn.setRequestProperty(
+                    "x-rapidapi-key",
+                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                )
+                conn.setRequestProperty(
+                    "x-rapidapi-host",
+                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                )
 
                 val responseCode = conn.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -243,23 +251,33 @@ class ApiTime : AppCompatActivity() {
                         content.append(inputLine)
                     }
                     `in`.close()
-
-                    val jsonArray = JSONArray(content.toString())
+                    val jsonObject = JSONObject(content.toString())
                     runOnUiThread {
-                        if (jsonArray.length() > 0) {
-                            val foodItem = jsonArray.getJSONObject(0)
-                            val calories = foodItem.optString("calories", "N/A")
-                            val fatTotal = foodItem.optString("fat_total_g", "N/A")
-                            val sugar = foodItem.optString("sugar_g", "N/A")
-                            val protein = foodItem.optString("protein_g", "N/A")
-
-                            foodDescription.text = "${foodDescription.text}\n\nCalories: $calories\nFat: $fatTotal g\nSugar: $sugar g\nProtein: $protein g"
+                        val calories = if (jsonObject.has("calories") && !jsonObject.isNull("calories")) {
+                            jsonObject.getJSONObject("calories").optString("value", "N/A")
                         } else {
-                            foodDescription.text = "${foodDescription.text}\n\nNutrition data not available."
+                            "N/A"
                         }
+                        val fatTotal = if (jsonObject.has("fat") && !jsonObject.isNull("fat")) {
+                            jsonObject.getJSONObject("fat").optString("value", "N/A")
+                        } else {
+                            "N/A"
+                        }
+                        val protein = if (jsonObject.has("protein") && !jsonObject.isNull("protein")) {
+                            jsonObject.getJSONObject("protein").optString("value", "N/A")
+                        } else {
+                            "N/A"
+                        }
+                        val carbs = if (jsonObject.has("carbs") && !jsonObject.isNull("carbs")) {
+                            jsonObject.getJSONObject("carbs").optString("value", "N/A")
+                        } else {
+                            "N/A"
+                        }
+
+                        foodDescription.text = "${foodDescription.text}\n\nCalories: $calories\nFat: $fatTotal g\nSugar: $carbs g\nProtein: $protein g"
                     }
                 } else {
-                    Log.e("Nutrition API Error", "Response Code: $responseCode")
+                    Log.e("API Error", "Response Code: $responseCode")
                 }
             } catch (e: Exception) {
                 Log.e("Error", e.toString())
