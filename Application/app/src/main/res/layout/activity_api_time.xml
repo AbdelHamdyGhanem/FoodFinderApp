@@ -11,11 +11,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:background="@android:color/black"
         android:paddingBottom="16dp"
         android:text="Food options from the API. Tap to delete or add to favorite."
-        android:textColor="#333333"
+        android:textColor="@color/white"
         android:textSize="20sp"
-        android:layout_marginTop="20sp"
+        android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/foodContainer"
@@ -24,15 +25,18 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/home">
 
         <LinearLayout
             android:id="@+id/foodContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="12dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="8dp" />
+            android:layout_marginRight="10dp"
+            android:padding="10dp" />
     </HorizontalScrollView>
 
     <Button
@@ -40,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#FF6200EE"
         android:onClick="selectFood"
         android:padding="12dp"

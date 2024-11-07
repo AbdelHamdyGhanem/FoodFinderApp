@@ -206,7 +206,7 @@ class ApiTime : AppCompatActivity() {
 
                     // Launch the RecipeDetailActivity to display the details
                     runOnUiThread {
-                        val intent = Intent(this@ApiTime, RecipeDetailActivity::class.java)
+                        val intent = Intent(this, RecipeDetailActivity::class.java)
                         intent.putExtra("recipeTitle", title)
                         intent.putExtra("recipeInstructions", instructions)
                         intent.putExtra("ingredients", ingredientList.toString())

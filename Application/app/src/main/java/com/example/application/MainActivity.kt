@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         micButton = findViewById(R.id.micButton) // ImageButton for microphone
 
         arrayList = ArrayList()
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arrayList!!)
+        adapter = FoodAdapter(this, R.layout.list_item, arrayList!!)
         listView.adapter = adapter
 
         // Set up button click listener for adding food
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         if (!food.isBlank() && !arrayList!!.contains(food)) {
             arrayList!!.add(food)
             adapter!!.notifyDataSetChanged()
-            AddFood!!.setText("")
+            AddFood!!.setText("") // Clear the EditText
             Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Item is empty or already exists", Toast.LENGTH_SHORT).show()

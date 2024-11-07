@@ -18,33 +18,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter item"
-            android:inputType="text" />
+            android:inputType="text"
+            android:minHeight="48dp" />
 
         <Button
             android:id="@+id/button_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:onClick="addFood"
             android:text="Add"
             android:textColor="@android:color/white" />
 
         <ListView
             android:id="@+id/listView"
-            android:layout_width="352dp"
-            android:layout_height="363dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/button_next_foodPref"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:onClick="goToPref"
-            android:text="Next"
-            android:textColor="@android:color/white" />
+            android:layout_height="300dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/micButton"
@@ -52,6 +44,15 @@
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_btn_speak_now"
             android:contentDescription="Microphone" />
+
+        <Button
+            android:id="@+id/button_next_foodPref"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:onClick="goToPref"
+            android:text="Next"
+            android:textColor="@android:color/white" />
 
 
     </LinearLayout>

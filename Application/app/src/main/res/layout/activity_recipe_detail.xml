@@ -9,9 +9,9 @@
         android:id="@+id/recipeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
+        android:textSize="24dp"
         android:textStyle="bold"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="40dp"/>
 
     <ImageView
         android:id="@+id/recipeImage"
@@ -32,6 +32,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Back"
-        android:layout_marginTop="10dp"
-        app_layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_marginTop="10dp"/>
 </LinearLayout>
