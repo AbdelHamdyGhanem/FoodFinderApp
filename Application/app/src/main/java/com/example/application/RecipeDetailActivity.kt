@@ -35,17 +35,41 @@ class RecipeDetailActivity : AppCompatActivity() {
         // Load the image using Picasso or Glide (Picasso is used here for simplicity)
         Picasso.get().load(imageUrl).into(recipeImageView)
 
+        // Back button functionality
         val backButton = findViewById<Button>(R.id.button)
         backButton.setOnClickListener {
             val intent = Intent(applicationContext, ApiTime::class.java)
             startActivity(intent)
         }
 
+        // Facebook Share Button
+        val shareButton = findViewById<Button>(R.id.shareButton)
+        shareButton.setOnClickListener {
+            shareRecipeOnFacebook(recipeTitle, recipeInstructions)
+        }
+    }
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
+    private fun shareRecipeOnFacebook(title: String?, instructions: String?) {
+        val shareText = "Check out this recipe: $title\n\nInstructions:\n$instructions"
+
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
+            setPackage("com.facebook.katana") // Ensures Facebook app is used if installed
+        }
+
+        // Check if the Facebook app is installed
+        if (shareIntent.resolveActivity(packageManager) != null) {
+            startActivity(shareIntent)
+        } else {
+            // Fallback: Open the default share dialog
+            val fallbackIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, shareText)
+                type = "text/plain"
+            }
+            startActivity(Intent.createChooser(fallbackIntent, "Share via"))
+        }
     }
 }
