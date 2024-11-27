@@ -12,10 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-class MainActivity : AppCompatActivity() {
+class ShoppingListActivity : AppCompatActivity() {
 
     private var AddFood: EditText? = null
-    private var arrayList: ArrayList<String>? = null
+    private var foodList: MutableList<String> = mutableListOf()
     private lateinit var adapter: FoodAdapter
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var micButton: ImageButton
@@ -23,21 +23,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_shopping_list)
 
         AddFood = findViewById(R.id.AddFood)
         val buttonAdd = findViewById<Button>(R.id.button_add)
         val listView = findViewById<ListView>(R.id.listView)
-        micButton = findViewById(R.id.micButton) // ImageButton for microphone
+        micButton = findViewById(R.id.micButton)
 
-        // Initialize arrayList
-        arrayList = ArrayList()
-
-        // Initialize the adapter and pass the lambda for onDeleteClick
-        adapter = FoodAdapter(this, R.layout.list_item, arrayList!!) { item ->
+        // Initialize FoodAdapter with onDeleteClick lambda function
+        adapter = FoodAdapter(this, R.layout.list_item, foodList) { item ->
             removeFood(item)
         }
         listView.adapter = adapter
+
+        // Load the shopping list from SharedPreferences when the activity is created
+        loadShoppingList()
 
         // Set up button click listener for adding food
         buttonAdd.setOnClickListener { addFood() }
@@ -51,40 +51,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         micButton.setOnClickListener {
-            startListening() // Start listening for voice input
+            startListening()
         }
 
-        // Button to navigate to ShoppingListActivity
-        val buttonShoppingList = findViewById<Button>(R.id.button_shopping_list)
-        buttonShoppingList.setOnClickListener {
-            val intent = Intent(applicationContext, ShoppingListActivity::class.java)
-            startActivity(intent)
-        }
-
-        val buttonNextFoodPref = findViewById<Button>(R.id.button_next_foodPref)
-        buttonNextFoodPref.setOnClickListener {
-            val intent = Intent(applicationContext, FoodPrefActivity::class.java)
-            intent.putStringArrayListExtra("foods", arrayList)
-            startActivity(intent)
+        // Set up item click listener to delete food from the list
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val item = foodList[position]
+            removeFood(item)
         }
     }
 
     private fun addFood() {
         val food = AddFood!!.text.toString().trim()
 
-        if (!food.isBlank() && !arrayList!!.contains(food)) {
-            arrayList!!.add(food)
+        if (food.isNotBlank() && !foodList.contains(food)) {
+            foodList.add(food)
             adapter.notifyDataSetChanged()
-            AddFood!!.setText("") // Clear the EditText
+            AddFood!!.setText("")
+            saveShoppingList()
             Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Item is empty or already exists", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun removeFood(item: String) {
-        arrayList!!.remove(item)
-        adapter.notifyDataSetChanged() // Notify adapter to refresh the list
     }
 
     private fun startListening() {
@@ -104,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             override fun onEndOfSpeech() {}
 
             override fun onError(error: Int) {
-                Toast.makeText(this@MainActivity, "Error recognizing speech", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ShoppingListActivity, "Error recognizing speech", Toast.LENGTH_SHORT).show()
             }
 
             override fun onResults(results: Bundle?) {
@@ -123,8 +111,38 @@ class MainActivity : AppCompatActivity() {
         speechRecognizer.startListening(intent)
     }
 
+    // Save shopping list to SharedPreferences
+    private fun saveShoppingList() {
+        val sharedPreferences = getSharedPreferences("ShoppingListPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        val foodListString = foodList.joinToString(",")
+        editor.putString("shopping_list", foodListString)
+        editor.apply()
+    }
+
+    // Load shopping list from SharedPreferences
+    private fun loadShoppingList() {
+        val sharedPreferences = getSharedPreferences("ShoppingListPrefs", MODE_PRIVATE)
+        val foodListString = sharedPreferences.getString("shopping_list", "") ?: ""
+
+        if (foodListString.isNotEmpty()) {
+            foodList.clear()
+            foodList.addAll(foodListString.split(","))
+        }
+
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun removeFood(item: String) {
+        foodList.remove(item)
+        adapter.notifyDataSetChanged() // Notify adapter to refresh the list
+        saveShoppingList() // Save the updated list to SharedPreferences
+        Toast.makeText(this, "Food item removed", Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        speechRecognizer.destroy() // Release the recognizer
+        speechRecognizer.destroy()
     }
 }
