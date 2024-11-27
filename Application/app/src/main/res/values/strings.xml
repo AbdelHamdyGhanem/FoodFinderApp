@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Application</string>
     <string name="home">Home</string>
+    <string name="app_logo"><![CDATA[<string name=\"app_logo\">App Logo</string>\n]]></string>
 </resources>
