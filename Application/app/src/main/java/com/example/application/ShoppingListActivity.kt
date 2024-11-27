@@ -29,6 +29,7 @@ class ShoppingListActivity : AppCompatActivity() {
         val buttonAdd = findViewById<Button>(R.id.button_add)
         val listView = findViewById<ListView>(R.id.listView)
         micButton = findViewById(R.id.micButton)
+        val backButton = findViewById<Button>(R.id.backButton)
 
         // Initialize FoodAdapter with onDeleteClick lambda function
         adapter = FoodAdapter(this, R.layout.list_item, foodList) { item ->
@@ -52,6 +53,11 @@ class ShoppingListActivity : AppCompatActivity() {
 
         micButton.setOnClickListener {
             startListening()
+        }
+
+        // Set up Back button click listener
+        backButton.setOnClickListener {
+            finish() // Go back to the previous activity
         }
 
         // Set up item click listener to delete food from the list
