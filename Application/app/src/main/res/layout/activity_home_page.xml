@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF5722"
+    android:backgroundTint="#FF5722"
+    android:gravity="top"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Title -->
+
+
+    <!-- Add Foods Button -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="329dp"
+        android:layout_height="414dp"
+        android:layout_gravity="center"
+        android:contentDescription="Logo"
+        android:src="@drawable/bros_cooking_logo" />
+
+    <!-- Food Preferences Button -->
+
+    <!-- Shopping List Button -->
+    <Button
+        android:id="@+id/button_add_foods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#009688"
+        android:text="Add Foods" />
+
+    <Button
+        android:id="@+id/button_food_preferences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#009688"
+        android:text="Food Preferences" />
+
+    <Button
+        android:id="@+id/button_shopping_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#009688"
+        android:text="Shopping List" />
+
+    <!-- Favorites Button -->
+    <Button
+        android:id="@+id/button_favorites"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#009688"
+        android:text="Favorites" />
+
+</LinearLayout>

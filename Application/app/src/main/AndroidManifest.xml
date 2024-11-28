@@ -3,13 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-
 
     <application
         android:allowBackup="true"
@@ -18,36 +16,32 @@
         android:roundIcon="@mipmap/test"
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
-
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".MainActivity" />
         <activity
             android:name=".ApiTime"
             android:exported="false" />
-
         <activity
             android:name=".FoodPrefActivity"
             android:exported="false" />
-
         <activity
             android:name=".RecipeDetailActivity"
             android:exported="false" />
-
         <activity
             android:name=".FavoritesActivity"
-            android:exported="false" />
-
-        <!-- Added ShoppingListActivity -->
+            android:exported="false" /> <!-- Added ShoppingListActivity -->
         <activity
             android:name=".ShoppingListActivity"
             android:exported="false" />
-
     </application>
+
 </manifest>

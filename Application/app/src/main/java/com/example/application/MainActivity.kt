@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -66,6 +67,17 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(applicationContext, FoodPrefActivity::class.java)
             intent.putStringArrayListExtra("foods", arrayList)
             startActivity(intent)
+        }
+    }
+
+    // This method is called when the ActionBar back button is clicked
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish() // Close MainActivity and return to HomeActivity
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
