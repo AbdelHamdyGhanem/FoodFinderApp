@@ -4,13 +4,14 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <TextView
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/itemName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/deleteButton"
-        android:textSize="16sp" />
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+    android:textSize="16sp"
+    android:gravity="center_vertical" />
 
     <ImageButton
         android:id="@+id/deleteButton"

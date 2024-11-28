@@ -1,72 +1,113 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="#FF5722">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+    <!-- EditText for Adding Food -->
+    <EditText
+        android:id="@+id/AddFood"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:hint="Enter item"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/AddFood"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter item"
-            android:inputType="text"
-            android:minHeight="48dp" />
+    <!-- Add Button -->
+    <Button
+        android:id="@+id/button_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#009688"
+        android:text="Add"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/AddFood" />
 
-        <Button
-            android:id="@+id/button_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:onClick="addFood"
-            android:text="Add"
-            android:textColor="@android:color/white" />
+    <!-- Next Button -->
+    <Button
+        android:id="@+id/button_next_foodPref"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#009688"
+        android:text="Next"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/AddFood" />
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
-            android:layout_weight="1"/>
+    <!-- ListView -->
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:background="#FF5722"
+        app:layout_constraintTop_toBottomOf="@id/button_add"
+        app:layout_constraintBottom_toTopOf="@id/micButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <ImageButton
-            android:id="@+id/micButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_btn_speak_now"
-            android:contentDescription="Microphone" />
+    <!-- Microphone Button -->
+    <ImageButton
+        android:id="@+id/micButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="#00FFFFFF"
+        android:backgroundTint="#009688"
+        android:contentDescription="Microphone"
+        android:src="@android:drawable/ic_btn_speak_now"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/button_next_foodPref"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:onClick="goToPref"
-            android:text="Next"
-            android:textColor="@android:color/white" />
+    <!-- Pantry Button -->
+    <Button
+        android:id="@+id/button_pantry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:backgroundTint="#009688"
+        android:text="Pantry"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/micButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/button_home" />
 
-        <Button
-            android:id="@+id/button_shopping_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Shopping List"
-            android:padding="12dp"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#FF6200EE"/>
+    <!-- Home Button -->
+    <Button
+        android:id="@+id/button_home"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:backgroundTint="#009688"
+        android:text="Home"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/micButton"
+        app:layout_constraintStart_toEndOf="@id/button_pantry"
+        app:layout_constraintEnd_toStartOf="@id/button_shopping_list" />
 
-
-
-    </LinearLayout>
-
+    <!-- Shopping List Button -->
+    <Button
+        android:id="@+id/button_shopping_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:backgroundTint="#009688"
+        android:text="Shopping List"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/micButton"
+        app:layout_constraintStart_toEndOf="@id/button_home"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

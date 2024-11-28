@@ -12,6 +12,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var micButton: ImageButton
     private val RECORD_AUDIO_REQUEST_CODE = 1
+    private val PERMISSION_REQUEST_CODE = 2
+    private val FILE_NAME = "pantry_items.txt"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,20 @@ class MainActivity : AppCompatActivity() {
         val buttonAdd = findViewById<Button>(R.id.button_add)
         val listView = findViewById<ListView>(R.id.listView)
         micButton = findViewById(R.id.micButton) // ImageButton for microphone
+
+        // Initialize Pantry Button
+        val buttonPantry = findViewById<Button>(R.id.button_pantry)
+        buttonPantry.setOnClickListener {
+            val intent = Intent(this, PantryActivity::class.java)
+            startActivity(intent)
+        }
+
+        val buttonHome = findViewById<Button>(R.id.button_home)
+        buttonHome.setOnClickListener {
+            // Navigate back to the HomeActivity
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
 
         // Initialize arrayList
         arrayList = ArrayList()
@@ -42,6 +60,11 @@ class MainActivity : AppCompatActivity() {
 
         // Set up button click listener for adding food
         buttonAdd.setOnClickListener { addFood() }
+
+        // Request storage permissions
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+        }
 
         // Set up SpeechRecognizer
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
@@ -62,12 +85,17 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Handle "Next" button
         val buttonNextFoodPref = findViewById<Button>(R.id.button_next_foodPref)
         buttonNextFoodPref.setOnClickListener {
-            val intent = Intent(applicationContext, FoodPrefActivity::class.java)
-            intent.putStringArrayListExtra("foods", arrayList)
+            // Save items to pantry file
+            saveItemsToFile(arrayList!!)
+            // Navigate to PantryActivity
+            val intent = Intent(this, FoodPrefActivity::class.java)
             startActivity(intent)
         }
+
+
     }
 
     // This method is called when the ActionBar back button is clicked
@@ -98,6 +126,21 @@ class MainActivity : AppCompatActivity() {
         arrayList!!.remove(item)
         adapter.notifyDataSetChanged() // Notify adapter to refresh the list
     }
+
+    private fun saveItemsToFile(items: List<String>) {
+        try {
+            val file = File(filesDir, FILE_NAME)
+            FileOutputStream(file, false).use { output ->
+                items.forEach { item ->
+                    output.write("$item\n".toByteArray())
+                }
+            }
+            Toast.makeText(this, "Items saved to pantry!", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error saving items: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun startListening() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)

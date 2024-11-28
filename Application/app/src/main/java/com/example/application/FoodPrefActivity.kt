@@ -9,12 +9,16 @@ import android.widget.EditText
 import android.widget.Switch
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
+
 
 class FoodPrefActivity : AppCompatActivity() {
     private var numberofRecipes: EditText? = null
     private var maximizeIngredients: Switch? = null
     private var ignorePantry: Switch? = null
     private var arrayList: ArrayList<String>? = null
+    private lateinit var sharedPreferences: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +33,9 @@ class FoodPrefActivity : AppCompatActivity() {
         ignorePantry = findViewById(R.id.ignorePantry)
         arrayList = intent.getStringArrayListExtra("foods")
 
+        // Initialize SharedPreferences
+        sharedPreferences = getSharedPreferences("PantryPrefs", MODE_PRIVATE)
+
         // pass data
         button_next_API.setOnClickListener { passDataToApiTime() }
 
@@ -42,6 +49,18 @@ class FoodPrefActivity : AppCompatActivity() {
         val numberOfRecipes = numberofRecipes!!.text.toString()
         val maximizeIngredients = maximizeIngredients!!.isChecked
         val ignorePantry = ignorePantry!!.isChecked
+
+        // Retrieve pantry items from SharedPreferences
+        val pantryItems = sharedPreferences.getStringSet("pantry_items", emptySet())?.toMutableList() ?: mutableListOf()
+
+        // Include pantry items if "Ignore Pantry" is off
+        if (!ignorePantry) {
+            pantryItems.forEach { item ->
+                if (!arrayList!!.contains(item)) {
+                    arrayList!!.add(item)
+                }
+            }
+        }
 
         // Use HashMap with specific types
         val preferences: HashMap<String, Any> = HashMap()
