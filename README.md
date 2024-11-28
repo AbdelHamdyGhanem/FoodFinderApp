@@ -6,4 +6,4 @@
 * added logo and colours
 * added pantry activity with persistent list of items stored on device's internal storage
 * added "home" button to "mainactivity" (activity where food items are added) -- user must click "Next" button for items to be added to the pantry
-* in progress: will be swapping "food preferences" button for "pantry" button
+* in progress: will be swapping "food preferences" button for "pantry" button, other activities need gui updated, pantry activity needs a button for "home" and a way to remove items
