@@ -49,8 +49,8 @@ class AllergiesActivity : AppCompatActivity() {
             true
         }
 
-        val buttonHomepage = findViewById<Button>(R.id.button_homepage)
-        buttonHomepage.setOnClickListener {
+        val buttonBack = findViewById<Button>(R.id.button_back)
+        buttonBack.setOnClickListener {
             finish()
         }
     }

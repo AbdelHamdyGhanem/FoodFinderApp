@@ -197,25 +197,14 @@ class ApiTime : AppCompatActivity() {
     private fun fetchRecipeDetails(recipeId: Int, title: String, imageUrl: String) {
         Thread {
             try {
-                // Construct the API URL to get detailed recipe information
                 val url = URL("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/$recipeId/information")
-
-                // Open a connection to the API
                 val conn = url.openConnection() as HttpURLConnection
                 conn.requestMethod = "GET"
-                conn.setRequestProperty(
-                    "x-rapidapi-key",
-                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
-                )
-                conn.setRequestProperty(
-                    "x-rapidapi-host",
-                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
-                )
+                conn.setRequestProperty("x-rapidapi-key", "YOUR_API_KEY")
+                conn.setRequestProperty("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
 
-                // Check if the response code is HTTP OK (200)
                 val responseCode = conn.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // Read the response from the API
                     val reader = BufferedReader(InputStreamReader(conn.inputStream))
                     val content = StringBuilder()
                     var inputLine: String?
@@ -224,19 +213,16 @@ class ApiTime : AppCompatActivity() {
                     }
                     reader.close()
 
-                    // Parse the response JSON object
-                    val jsonObject = JSONObject(content.toString())
+                    Log.d("API Details Response", content.toString()) // Debug response
 
-                    // Extract the recipe instructions and any other relevant data
+                    val jsonObject = JSONObject(content.toString())
                     val instructions = jsonObject.optString("instructions", "Instructions not available")
                     val ingredients = jsonObject.optJSONArray("extendedIngredients")
                     val ingredientList = StringBuilder()
 
-                    // Check for ingredients array and iterate
                     if (ingredients != null) {
                         for (i in 0 until ingredients.length()) {
                             val ingredient = ingredients.getJSONObject(i)
-                            // Safely check for "originalString" and append it
                             val originalString = ingredient.optString("originalString", "No ingredient description")
                             ingredientList.append(originalString).append("\n")
                         }
@@ -244,13 +230,8 @@ class ApiTime : AppCompatActivity() {
                         ingredientList.append("No ingredients available")
                     }
 
-//                    // Build a list of ingredients
-//                    for (i in 0 until ingredients.length()) {
-//                        val ingredient = ingredients.getJSONObject(i)
-//                        ingredientList.append(ingredient.getString("originalString")).append("\n")
-//                    }
+                    Log.d("Parsed Ingredients", ingredientList.toString()) // Debug ingredients
 
-                    // Launch the RecipeDetailActivity to display the details
                     runOnUiThread {
                         val intent = Intent(this, RecipeDetailActivity::class.java)
                         intent.putExtra("recipeTitle", title)
@@ -265,10 +246,8 @@ class ApiTime : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("Error", e.toString())
             }
-            Log.d("Image URL", imageUrl)
         }.start()
     }
-
 
     private fun fetchNutritionData(foodTitle: String, foodDescription: TextView) {
         Thread {

@@ -2,11 +2,12 @@ package com.example.application
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
+import com.example.application.PantryAdapter
+
 
 class PantryActivity : AppCompatActivity() {
     private val FILE_NAME = "pantry_items.txt"
@@ -16,12 +17,19 @@ class PantryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pantry)
 
         val pantryListView = findViewById<ListView>(R.id.pantryListView)
-        val pantryItems = loadItemsFromFile()
+        val pantryItems = loadItemsFromFile().toMutableList()
 
-        val adapter =
-            ArrayAdapter(this, R.layout.list_item_pantry, R.id.pantryItemText, pantryItems)
-        pantryListView.adapter = adapter
+        // Declare pantryAdapter here before usage
+        lateinit var pantryAdapter: PantryAdapter
 
+            pantryAdapter = PantryAdapter(this, pantryItems) { item ->
+            // Remove the item and update the list
+            pantryItems.remove(item)
+            saveItemsToFile(pantryItems)
+            pantryAdapter.notifyDataSetChanged()
+        }
+
+        pantryListView.adapter = pantryAdapter
 
         // Home Button Logic
         val buttonHome = findViewById<Button>(R.id.button_home)
@@ -37,13 +45,12 @@ class PantryActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Allergies Button logic
+        // Allergies Button Logic
         val buttonAllergies = findViewById<Button>(R.id.button_allergies)
         buttonAllergies.setOnClickListener {
             val intent = Intent(this, AllergiesActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun loadItemsFromFile(): List<String> {
@@ -61,5 +68,16 @@ class PantryActivity : AppCompatActivity() {
             e.printStackTrace()
         }
         return items
+    }
+
+    private fun saveItemsToFile(items: List<String>) {
+        try {
+            val file = File(filesDir, FILE_NAME)
+            file.printWriter().use { writer ->
+                items.forEach { writer.println(it) }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
