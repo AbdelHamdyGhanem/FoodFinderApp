@@ -1,7 +1,9 @@
 package com.example.application
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
@@ -16,8 +18,32 @@ class PantryActivity : AppCompatActivity() {
         val pantryListView = findViewById<ListView>(R.id.pantryListView)
         val pantryItems = loadItemsFromFile()
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, pantryItems)
+        val adapter =
+            ArrayAdapter(this, R.layout.list_item_pantry, R.id.pantryItemText, pantryItems)
         pantryListView.adapter = adapter
+
+
+        // Home Button Logic
+        val buttonHome = findViewById<Button>(R.id.button_home)
+        buttonHome.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Food Preferences Button Logic
+        val buttonFoodPreferences = findViewById<Button>(R.id.button_food_preferences)
+        buttonFoodPreferences.setOnClickListener {
+            val intent = Intent(this, FoodPrefActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Allergies Button logic
+        val buttonAllergies = findViewById<Button>(R.id.button_allergies)
+        buttonAllergies.setOnClickListener {
+            val intent = Intent(this, AllergiesActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun loadItemsFromFile(): List<String> {

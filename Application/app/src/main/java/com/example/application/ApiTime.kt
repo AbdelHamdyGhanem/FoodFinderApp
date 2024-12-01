@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -145,6 +146,49 @@ class ApiTime : AppCompatActivity() {
             } catch (e: Exception) {
                 Log.e("JSON Parsing Error", e.toString())
             }
+        }
+        val allergens = loadAllergiesFromFile() // Load user's allergens
+
+        for (i in 0 until jsonArray.length()) {
+            val recipe = jsonArray.getJSONObject(i)
+            val title = recipe.getString("title")
+            val usedIngredients = recipe.getJSONArray("usedIngredients")
+            val missedIngredients = recipe.getJSONArray("missedIngredients")
+
+            // Find allergens in the recipe
+            val allergensFound = allergens.filter { allergen ->
+                (0 until usedIngredients.length()).any {
+                    usedIngredients.getJSONObject(it).getString("name").contains(allergen, true)
+                } ||
+                        (0 until missedIngredients.length()).any {
+                            missedIngredients.getJSONObject(it).getString("name").contains(allergen, true)
+                        }
+            }
+
+            // Allergen warning text
+            val allergenWarning = if (allergensFound.isNotEmpty()) {
+                "\n⚠ Contains known allergens: ${allergensFound.joinToString(", ")}"
+            } else ""
+
+            // Display recipe card
+            val cardView = layoutInflater.inflate(R.layout.card_layout, null)
+            val foodName = cardView.findViewById<TextView>(R.id.foodName)
+            val foodDescription = cardView.findViewById<TextView>(R.id.foodDescription)
+
+            foodName.text = title
+            foodDescription.text = "Ingredients used: ${usedIngredients.length()}${allergenWarning}"
+
+            foodContainer!!.addView(cardView)
+        }
+    }
+
+    // Helper to load allergies from file
+    private fun loadAllergiesFromFile(): List<String> {
+        val file = File(filesDir, "allergies.txt")
+        return if (file.exists()) {
+            file.readLines().map { it.trim() }
+        } else {
+            emptyList()
         }
     }
 

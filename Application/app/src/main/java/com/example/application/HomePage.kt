@@ -24,9 +24,9 @@ class HomeActivity : AppCompatActivity() {
         }
 
         // Button to navigate to Food Preferences
-        val buttonFoodPreferences = findViewById<Button>(R.id.button_food_preferences)
+        val buttonFoodPreferences = findViewById<Button>(R.id.button_pantry)
         buttonFoodPreferences.setOnClickListener {
-            val intent = Intent(this, FoodPrefActivity::class.java)
+            val intent = Intent(this, PantryActivity::class.java)
             startActivity(intent)
         }
 

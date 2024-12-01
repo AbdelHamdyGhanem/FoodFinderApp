@@ -5,17 +5,19 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FF5722"
     tools:context=".FoodPrefActivity">
 
     <EditText
         android:id="@+id/number_of_recipes"
         android:layout_width="380dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="56dp"
         android:hint="Number of recipes (optional)"
         android:inputType="number"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.312"
+        app:layout_constraintHorizontal_bias="0.064"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,42 +25,48 @@
         android:id="@+id/maximizeIngredients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
+        android:buttonTint="#009688"
+        android:buttonTintMode="src_atop"
         android:text="Maximize Used Ingredients"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/number_of_recipes"/>
+        app:layout_constraintTop_toBottomOf="@id/number_of_recipes" />
 
     <Switch
         android:id="@+id/ignorePantry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
         android:text="Ignore Pantry"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/maximizeIngredients"/>
+        app:layout_constraintTop_toBottomOf="@id/maximizeIngredients" />
 
     <Button
         android:id="@+id/button_prev_foodPref"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:backgroundTint="#009688"
         android:text="Previous"
         app:layout_constraintEnd_toStartOf="@id/button_next_API"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ignorePantry"
-        app:layout_constraintWidth_percent="0.4"/>
+        app:layout_constraintWidth_percent="0.4" />
 
     <Button
         android:id="@+id/button_next_API"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Next"
+        android:backgroundTint="#009688"
+        android:text="Search Recipes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button_prev_foodPref"
         app:layout_constraintTop_toBottomOf="@id/ignorePantry"
-        app:layout_constraintWidth_percent="0.4"/>
+        app:layout_constraintWidth_percent="0.4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

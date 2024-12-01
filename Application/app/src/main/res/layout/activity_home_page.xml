@@ -32,12 +32,12 @@
         android:text="Add Foods" />
 
     <Button
-        android:id="@+id/button_food_preferences"
+        android:id="@+id/button_pantry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#009688"
-        android:text="Food Preferences" />
+        android:text="Pantry" />
 
     <Button
         android:id="@+id/button_shopping_list"

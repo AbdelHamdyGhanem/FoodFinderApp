@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FF5722">
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@mipmap/test"
-        android:layout_centerInParent="true"
-        android:contentDescription="@string/app_logo" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="false"
+        android:contentDescription="@string/app_logo"
+        android:icon="@mipmap/bros_cooking_logo" />
 </RelativeLayout>
