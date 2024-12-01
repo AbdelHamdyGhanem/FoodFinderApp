@@ -1,5 +1,6 @@
 package com.example.application
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,11 @@ class AllergiesActivity : AppCompatActivity() {
             saveAllergiesToFile()
             Toast.makeText(this, "Allergy removed!", Toast.LENGTH_SHORT).show()
             true
+        }
+
+        val buttonHomepage = findViewById<Button>(R.id.button_homepage)
+        buttonHomepage.setOnClickListener {
+            finish()
         }
     }
 
