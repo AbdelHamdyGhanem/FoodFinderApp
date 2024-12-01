@@ -1,5 +1,7 @@
 package com.example.application
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,12 +26,18 @@ class FavoritesActivity : AppCompatActivity() {
         intent.getStringArrayListExtra("favoritesList")?.toMutableList() ?: mutableListOf()
     }
 
+    private val sharedPreferences: SharedPreferences by lazy {
+        getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorites)
 
         favoritesRecyclerView = findViewById(R.id.favoritesRecyclerView)
         favoritesRecyclerView.layoutManager = LinearLayoutManager(this)
+        val favoritesList = sharedPreferences.getStringSet("favorites", emptySet())?.toMutableList()
+            ?: mutableListOf()
         favoritesAdapter = FavoritesAdapter(favoritesList)
         favoritesRecyclerView.adapter = favoritesAdapter
 

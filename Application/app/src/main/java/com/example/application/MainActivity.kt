@@ -92,6 +92,7 @@ class MainActivity : AppCompatActivity() {
             saveItemsToFile(arrayList!!)
             // Navigate to PantryActivity
             val intent = Intent(this, FoodPrefActivity::class.java)
+            intent.putStringArrayListExtra("foods", arrayList)
             startActivity(intent)
         }
 

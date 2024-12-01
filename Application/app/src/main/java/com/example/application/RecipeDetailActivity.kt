@@ -38,8 +38,7 @@ class RecipeDetailActivity : AppCompatActivity() {
         // Back button functionality
         val backButton = findViewById<Button>(R.id.button)
         backButton.setOnClickListener {
-            val intent = Intent(applicationContext, ApiTime::class.java)
-            startActivity(intent)
+            finish()
         }
 
         // Facebook Share Button

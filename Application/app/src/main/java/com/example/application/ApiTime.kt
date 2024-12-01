@@ -1,6 +1,8 @@
 package com.example.application
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
@@ -329,17 +331,24 @@ class ApiTime : AppCompatActivity() {
         }.start()
     }
 
+    private val sharedPreferences: SharedPreferences by lazy {
+        getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    }
+
     private fun toggleFavorite(favoriteIcon: TextView, title: String) {
         val isFavorite = favoriteIcon.tag as Boolean
+        val editor = sharedPreferences.edit()
         if (!isFavorite) {
             favoriteIcon.text = "❤️"
             favoriteIcon.tag = true
             favoritesList.add(title)
+            editor.putStringSet("favorites", favoritesList.toSet()).apply()
             Toast.makeText(this, "$title has been added to your favorites", Toast.LENGTH_SHORT).show()
         } else {
             favoriteIcon.text = "♡"
             favoriteIcon.tag = false
             favoritesList.remove(title)
+            editor.putStringSet("favorites", favoritesList.toSet()).apply()
             Toast.makeText(this, "$title has been removed from favorites", Toast.LENGTH_SHORT).show()
         }
     }
@@ -347,6 +356,11 @@ class ApiTime : AppCompatActivity() {
     fun showFavorites(view: View) {
         val intent = Intent(this, FavoritesActivity::class.java)
         intent.putStringArrayListExtra("favoritesList", ArrayList(favoritesList))
+        startActivity(intent)
+    }
+
+    fun navigateToHomepage(view: View) {
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
 }
