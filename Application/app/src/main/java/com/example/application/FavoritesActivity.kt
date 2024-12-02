@@ -11,14 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.json.JSONArray
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
-import java.util.Properties
 
 class FavoritesActivity : AppCompatActivity() {
 
@@ -79,14 +72,13 @@ class FavoritesActivity : AppCompatActivity() {
             holder.favoriteIcon.text = "❤️"
 
             holder.favoriteIcon.setOnClickListener {
-                // Remove from favorites
-                val newItems = items.toMutableList()
-                newItems.removeAt(holder.adapterPosition)
+                val position = holder.absoluteAdapterPosition
+                items.removeAt(position)
                 val editor = sharedPreferences.edit()
-                editor.putStringSet("favorites", newItems.toSet()).apply()
+                editor.putStringSet("favorites", items.toSet()).apply()
 
                 Toast.makeText(this@FavoritesActivity, "$title removed from favorites", Toast.LENGTH_SHORT).show()
-                notifyItemRemoved(holder.bindingAdapterPosition)
+                notifyItemRemoved(position)
             }
         }
 

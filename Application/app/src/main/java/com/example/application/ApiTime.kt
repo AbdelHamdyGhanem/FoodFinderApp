@@ -40,6 +40,9 @@ class ApiTime : AppCompatActivity() {
         this.enableEdgeToEdge()
         setContentView(R.layout.activity_api_time)
 
+        val storedFavorites = sharedPreferences.getStringSet("favorites", emptySet())
+        favoritesList = storedFavorites?.toMutableList() ?: mutableListOf()
+
         val intent = intent
         selectedFoods = intent.getStringArrayListExtra("foods")
         foodPreferences = intent.getSerializableExtra("preferences") as HashMap<String, Any>?
@@ -330,7 +333,6 @@ class ApiTime : AppCompatActivity() {
             favoriteIcon.text = "❤️"
             favoriteIcon.tag = true
 
-            // Create a JSON string to store recipe details
             val recipeDetails = JSONObject().apply {
                 put("title", title)
                 put("nutritionData", nutritionData)
@@ -338,18 +340,18 @@ class ApiTime : AppCompatActivity() {
                 put("ingredients", Ingredients)
             }.toString()
 
-            favoritesList.add(recipeDetails)
-            editor.putStringSet("favorites", favoritesList.toSet()).apply()
+            if (favoritesList.none { JSONObject(it).getString("title") == title }) {
+                favoritesList.add(recipeDetails)
+            }
 
+            editor.putStringSet("favorites", favoritesList.toSet()).apply()
             Toast.makeText(this, "$title has been added to your favorites", Toast.LENGTH_SHORT).show()
         } else {
             favoriteIcon.text = "♡"
             favoriteIcon.tag = false
 
-            // Remove the recipe by title
             favoritesList.removeIf { JSONObject(it).getString("title") == title }
             editor.putStringSet("favorites", favoritesList.toSet()).apply()
-
             Toast.makeText(this, "$title has been removed from favorites", Toast.LENGTH_SHORT).show()
         }
     }
