@@ -2,20 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FF5722"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FF5722">
+    android:padding="20dp">
 
     <Button
         android:id="@+id/button_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
+        android:backgroundTint="#009688"
+        android:insetTop="10dp"
         android:text="Back" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favoritesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="20dp" />
 </LinearLayout>

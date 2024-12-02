@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Application">
         <activity
+            android:name=".PantryAdapter"
+            android:exported="false" />
+        <activity
             android:name=".AllergiesActivity"
             android:exported="false" />
         <activity

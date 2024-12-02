@@ -22,15 +22,18 @@ class RecipeDetailActivity : AppCompatActivity() {
         val recipeTitle = intent.getStringExtra("recipeTitle")
         val recipeInstructions = intent.getStringExtra("recipeInstructions")
         val imageUrl = intent.getStringExtra("imageUrl")
+        val recipeIngredients = intent.getStringExtra("ingredients") // Retrieve ingredients
 
         // Set the views
         val recipeTitleView = findViewById<TextView>(R.id.recipeTitle)
         val recipeInstructionsView = findViewById<TextView>(R.id.recipeInstructions)
+        val recipeIngredientsView = findViewById<TextView>(R.id.recipeIngredients) // Ingredients view
         val recipeImageView = findViewById<ImageView>(R.id.recipeImage)
 
         // Set the data
         recipeTitleView.text = recipeTitle
         recipeInstructionsView.text = recipeInstructions
+        recipeIngredientsView.text = recipeIngredients // Display ingredients
 
         // Load the image using Picasso or Glide (Picasso is used here for simplicity)
         Picasso.get().load(imageUrl).into(recipeImageView)
@@ -47,6 +50,7 @@ class RecipeDetailActivity : AppCompatActivity() {
             shareRecipeOnFacebook(recipeTitle, recipeInstructions)
         }
     }
+
 
     private fun shareRecipeOnFacebook(title: String?, instructions: String?) {
         val shareText = "Check out this recipe: $title\n\nInstructions:\n$instructions"

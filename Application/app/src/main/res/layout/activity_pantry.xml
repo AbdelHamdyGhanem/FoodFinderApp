@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FF5722"
-    android:backgroundTint="#FF5722"
     tools:context=".PantryActivity">
 
     <LinearLayout
@@ -44,48 +43,47 @@
             <!-- Home Button -->
             <Button
                 android:id="@+id/button_home"
-                android:layout_width="100dp"
-                android:layout_height="55dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:backgroundTint="#009688"
                 android:text="Home"
                 android:textColor="#FFFFFF"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/button_food_preferences"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/button_food_preferences"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.3" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread" />
 
             <!-- Food Preferences Button -->
             <Button
                 android:id="@+id/button_food_preferences"
-                android:layout_width="142dp"
-                android:layout_height="67dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:backgroundTint="#009688"
-                android:text="Food Preferences"
+                android:text="Search Recipes"
                 android:textColor="#FFFFFF"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/button_allergies"
                 app:layout_constraintStart_toEndOf="@id/button_home"
+                app:layout_constraintEnd_toStartOf="@id/button_allergies"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.3" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread" />
 
             <!-- Allergies Button -->
             <Button
                 android:id="@+id/button_allergies"
-                android:layout_width="110dp"
-                android:layout_height="53dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:backgroundTint="#009688"
                 android:text="Allergies"
                 android:textColor="#FFFFFF"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/button_food_preferences"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.727"
-                app:layout_constraintWidth_percent="0.3" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
