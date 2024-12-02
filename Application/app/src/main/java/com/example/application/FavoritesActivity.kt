@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.json.JSONArray
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -23,6 +24,9 @@ class FavoritesActivity : AppCompatActivity() {
 
     private lateinit var favoritesRecyclerView: RecyclerView
     private lateinit var favoritesAdapter: FavoritesAdapter
+    private lateinit var nutritionData: String
+    private lateinit var ingredients: String
+    private lateinit var instructions: String
 
     private val sharedPreferences: SharedPreferences by lazy {
         getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -34,8 +38,10 @@ class FavoritesActivity : AppCompatActivity() {
 
         favoritesRecyclerView = findViewById(R.id.favoritesRecyclerView)
         favoritesRecyclerView.layoutManager = LinearLayoutManager(this)
+
         val favoritesList = sharedPreferences.getStringSet("favorites", emptySet())?.toMutableList()
             ?: mutableListOf()
+
         favoritesAdapter = FavoritesAdapter(favoritesList)
         favoritesRecyclerView.adapter = favoritesAdapter
 
@@ -61,18 +67,26 @@ class FavoritesActivity : AppCompatActivity() {
 
         override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
             val item = items[position]
-            holder.foodName.text = item
-            holder.favoriteIcon.text = "❤️" // Initially set as favorite
+            val recipeDetails = JSONObject(item)
 
-            // Load nutrition data for each food item
-            fetchNutritionData(item, holder.foodDescription)
+            val title = recipeDetails.getString("title")
+            val nutritionData = recipeDetails.getString("nutritionData")
+            val ingredients = recipeDetails.getString("ingredients")
+            val instructions = recipeDetails.getString("instructions")
 
-            // Toggle favorite on click
+            holder.foodName.text = title
+            holder.foodDescription.text = "$ingredients\n\n$nutritionData\n\n$instructions"
+            holder.favoriteIcon.text = "❤️"
+
             holder.favoriteIcon.setOnClickListener {
                 // Remove from favorites
-                items.removeAt(holder.adapterPosition)
-                notifyItemRemoved(holder.adapterPosition)
-                Toast.makeText(this@FavoritesActivity, "$item removed from favorites", Toast.LENGTH_SHORT).show()
+                val newItems = items.toMutableList()
+                newItems.removeAt(holder.adapterPosition)
+                val editor = sharedPreferences.edit()
+                editor.putStringSet("favorites", newItems.toSet()).apply()
+
+                Toast.makeText(this@FavoritesActivity, "$title removed from favorites", Toast.LENGTH_SHORT).show()
+                notifyItemRemoved(holder.bindingAdapterPosition)
             }
         }
 
@@ -80,48 +94,8 @@ class FavoritesActivity : AppCompatActivity() {
 
         private fun fetchNutritionData(foodTitle: String, foodDescription: TextView) {
             Thread {
-                try {
-                    val apiUrl = "https://api.api-ninjas.com/v1/nutrition?query=" + URLEncoder.encode(foodTitle, "UTF-8")
-                    val url = URL(apiUrl)
+                foodDescription.text = ingredients + "\n" + nutritionData + "\n" + instructions
 
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.requestMethod = "GET"
-                    conn.setRequestProperty("X-Api-Key", BuildConfig.XAPI_KEY)
-
-                    val responseCode = conn.responseCode
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        val `in` = BufferedReader(InputStreamReader(conn.inputStream))
-                        val content = StringBuilder()
-                        var inputLine: String?
-                        while (`in`.readLine().also { inputLine = it } != null) {
-                            content.append(inputLine)
-                        }
-                        `in`.close()
-
-                        val jsonArray = JSONArray(content.toString())
-                        runOnUiThread {
-                            if (jsonArray.length() > 0) {
-                                val foodItem = jsonArray.getJSONObject(0)
-                                val calories = foodItem.optString("calories", "N/A")
-                                val fatTotal = foodItem.optString("fat_total_g", "N/A")
-                                val sugar = foodItem.optString("sugar_g", "N/A")
-                                val protein = foodItem.optString("protein_g", "N/A")
-
-                                foodDescription.text = "Calories: $calories\nFat: $fatTotal g\nSugar: $sugar g\nProtein: $protein g"
-                            } else {
-                                foodDescription.text = "Nutrition data not available."
-                            }
-                        }
-                    } else {
-                        runOnUiThread {
-                            foodDescription.text = "Failed to load nutrition data."
-                        }
-                    }
-                } catch (e: Exception) {
-                    runOnUiThread {
-                        foodDescription.text = "Error loading nutrition data."
-                    }
-                }
             }.start()
         }
     }

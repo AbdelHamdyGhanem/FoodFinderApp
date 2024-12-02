@@ -30,7 +30,10 @@ class ApiTime : AppCompatActivity() {
     private var ignorePantry = false
     private var maximizeIngredients = 0
     private lateinit var gestureDetector: GestureDetector
-    private val favoritesList = mutableListOf<String>()
+    private var favoritesList = mutableListOf<String>()
+    private var Ingredients = ""
+    private var instructions = ""
+    private var nutritionData = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,8 @@ class ApiTime : AppCompatActivity() {
         maximizeIngredients = if (foodPreferences!!["maximizeIngredients"] == "Yes") 2 else 1
         ignorePantry = foodPreferences!!["ignorePantry"] == "No"
 
+        sendData()
+
         gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDoubleTap(e: MotionEvent): Boolean {
                 val cardView = findViewAtLocation(e)
@@ -57,8 +62,6 @@ class ApiTime : AppCompatActivity() {
                 return true
             }
         })
-
-        sendData()
     }
 
     private fun findViewAtLocation(event: MotionEvent): View? {
@@ -76,10 +79,10 @@ class ApiTime : AppCompatActivity() {
     private fun sendData() {
         Thread {
             try {
-                val ingredients = java.lang.String.join(",", selectedFoods)
+                Ingredients = java.lang.String.join(",", selectedFoods)
                 val url = URL(
                     "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=" + URLEncoder.encode(
-                        ingredients,
+                        Ingredients,
                         "UTF-8"
                     ) + "&number=" + numberOfRecipes + "&ignorePantry=" + ignorePantry + "&ranking=" + maximizeIngredients
                 )
@@ -218,7 +221,7 @@ class ApiTime : AppCompatActivity() {
                     val jsonObject = JSONObject(content.toString())
 
                     // Extract the recipe instructions and any other relevant data
-                    val instructions = jsonObject.optString("instructions", "Instructions not available")
+                    instructions = jsonObject.optString("instructions", "Instructions not available")
                     val ingredients = jsonObject.optJSONArray("extendedIngredients")
                     val ingredientList = StringBuilder()
 
@@ -238,7 +241,7 @@ class ApiTime : AppCompatActivity() {
                         val intent = Intent(this, RecipeDetailActivity::class.java)
                         intent.putExtra("recipeTitle", title)
                         intent.putExtra("recipeInstructions", instructions)
-                        intent.putExtra("ingredients", ingredientList.toString())
+                        intent.putExtra("ingredients", Ingredients)
                         intent.putExtra("imageUrl", imageUrl)
                         startActivity(intent)
                     }
@@ -302,8 +305,9 @@ class ApiTime : AppCompatActivity() {
                         } else {
                             "N/A"
                         }
+                        nutritionData = "${foodDescription.text}\n\nCalories: $calories\nFat: $fatTotal g\nSugar: $carbs g\nProtein: $protein g"
 
-                        foodDescription.text = "${foodDescription.text}\n\nCalories: $calories\nFat: $fatTotal g\nSugar: $carbs g\nProtein: $protein g"
+                        foodDescription.text = nutritionData
                     }
                 } else {
                     Log.e("API Error", "Response Code: $responseCode")
@@ -321,17 +325,31 @@ class ApiTime : AppCompatActivity() {
     private fun toggleFavorite(favoriteIcon: TextView, title: String) {
         val isFavorite = favoriteIcon.tag as Boolean
         val editor = sharedPreferences.edit()
+
         if (!isFavorite) {
             favoriteIcon.text = "❤️"
             favoriteIcon.tag = true
-            favoritesList.add(title)
+
+            // Create a JSON string to store recipe details
+            val recipeDetails = JSONObject().apply {
+                put("title", title)
+                put("nutritionData", nutritionData)
+                put("instructions", instructions)
+                put("ingredients", Ingredients)
+            }.toString()
+
+            favoritesList.add(recipeDetails)
             editor.putStringSet("favorites", favoritesList.toSet()).apply()
+
             Toast.makeText(this, "$title has been added to your favorites", Toast.LENGTH_SHORT).show()
         } else {
             favoriteIcon.text = "♡"
             favoriteIcon.tag = false
-            favoritesList.remove(title)
+
+            // Remove the recipe by title
+            favoritesList.removeIf { JSONObject(it).getString("title") == title }
             editor.putStringSet("favorites", favoritesList.toSet()).apply()
+
             Toast.makeText(this, "$title has been removed from favorites", Toast.LENGTH_SHORT).show()
         }
     }
@@ -339,6 +357,9 @@ class ApiTime : AppCompatActivity() {
     fun showFavorites(view: View) {
         val intent = Intent(this, FavoritesActivity::class.java)
         intent.putStringArrayListExtra("favoritesList", ArrayList(favoritesList))
+        intent.putExtra("nutritionData", nutritionData)
+        intent.putExtra("ingredients", Ingredients)
+        intent.putExtra("instructions", instructions)
         startActivity(intent)
     }
 
