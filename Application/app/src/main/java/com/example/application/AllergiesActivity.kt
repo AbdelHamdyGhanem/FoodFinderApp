@@ -23,20 +23,38 @@ class AllergiesActivity : AppCompatActivity() {
         allergiesList = loadAllergiesFromFile()
 
         // Set up adapter for ListView
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, allergiesList)
+        adapter = ItemAdapter(this, allergiesList, FILE_NAME)
         allergiesListView.adapter = adapter
 
         // Add allergy to list and save
         addButton.setOnClickListener {
             val allergy = allergyInput.text.toString().trim()
-            if (allergy.isNotBlank() && !allergiesList.contains(allergy)) {
-                allergiesList.add(allergy)
+
+            if (allergy.isNotBlank()) {
+                val allergiesToAdd = mutableListOf(allergy)
+
+                // Function to get the singular form of a word (basic implementation)
+                fun getSingularForm(word: String): String {
+                    if (word.endsWith("s") && word.length > 1) {
+                        return word.substring(0, word.length - 1)
+                    }
+                    return word
+                }
+
+                // Add the singular form if it's different from the original
+                val singularForm = getSingularForm(allergy)
+                if (singularForm != allergy && !allergiesList.contains(singularForm)) {
+                    allergiesToAdd.add(singularForm)
+                }
+
+                // Add allergies to the list and update UI
+                allergiesList.addAll(allergiesToAdd.filterNot { allergiesList.contains(it) })
                 adapter.notifyDataSetChanged()
                 saveAllergiesToFile()
                 allergyInput.text.clear()
                 Toast.makeText(this, "Allergy added!", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Invalid or duplicate entry!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Invalid entry!", Toast.LENGTH_SHORT).show()
             }
         }
 

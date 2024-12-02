@@ -88,11 +88,11 @@ class ApiTime : AppCompatActivity() {
                 conn.requestMethod = "GET"
                 conn.setRequestProperty(
                     "x-rapidapi-key",
-                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                    BuildConfig.API_KEY
                 )
                 conn.setRequestProperty(
                     "x-rapidapi-host",
-                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                    BuildConfig.API_HOST
                 )
 
                 val responseCode = conn.responseCode
@@ -128,59 +128,49 @@ class ApiTime : AppCompatActivity() {
                 val foodDescription = cardView.findViewById<TextView>(R.id.foodDescription)
                 val favoriteIcon = cardView.findViewById<TextView>(R.id.favoriteIcon)
 
-                foodName.text = title
+                val allergens = loadAllergiesFromFile() // Load user's allergens
 
-                // Set click listener for the card to open RecipeDetailActivity
-                cardView.setOnClickListener {
-                    fetchRecipeDetails(recipeId, title, imageUrl)
+                for (i in 0 until jsonArray.length()) {
+                    val usedIngredients = recipe.getJSONArray("usedIngredients")
+                    val missedIngredients = recipe.getJSONArray("missedIngredients")
+
+
+                    // Find allergens in the recipe
+                    val allergensFound = allergens.filter { allergen ->
+                        (0 until usedIngredients.length()).any {
+                            usedIngredients.getJSONObject(it).getString("name").contains(allergen, true)
+                        } ||
+                                (0 until missedIngredients.length()).any {
+                                    missedIngredients.getJSONObject(it).getString("name").contains(allergen, true)
+                                }
+                    }
+                    Log.d("Allergens Found", allergensFound.toString())
+
+                    // Allergen warning text
+                    val allergenWarning = if (allergensFound.isNotEmpty()) {
+                        "\n⚠ Contains known allergens: ${allergensFound.joinToString(", ")}"
+                    } else ""
+
+                    foodName.text = title
+                    cardView.setOnClickListener {
+                        fetchRecipeDetails(recipeId, title, imageUrl)
+                    }
+                    favoriteIcon.text = "♡"
+                    favoriteIcon.tag = false
+
+                    favoriteIcon.setOnClickListener { v ->
+                        toggleFavorite(v as TextView, title)
+                    }
+
+                    foodDescription.text = "Ingredients used: ${usedIngredients.length()}${allergenWarning}"
+
+                    foodContainer!!.addView(cardView)
+                    fetchNutritionData(title, foodDescription)
                 }
-
-                favoriteIcon.text = "♡"
-                favoriteIcon.tag = false
-
-                favoriteIcon.setOnClickListener { v ->
-                    toggleFavorite(v as TextView, title)
-                }
-
-                foodContainer!!.addView(cardView)
-                fetchNutritionData(title, foodDescription)
 
             } catch (e: Exception) {
                 Log.e("JSON Parsing Error", e.toString())
             }
-        }
-        val allergens = loadAllergiesFromFile() // Load user's allergens
-
-        for (i in 0 until jsonArray.length()) {
-            val recipe = jsonArray.getJSONObject(i)
-            val title = recipe.getString("title")
-            val usedIngredients = recipe.getJSONArray("usedIngredients")
-            val missedIngredients = recipe.getJSONArray("missedIngredients")
-
-            // Find allergens in the recipe
-            val allergensFound = allergens.filter { allergen ->
-                (0 until usedIngredients.length()).any {
-                    usedIngredients.getJSONObject(it).getString("name").contains(allergen, true)
-                } ||
-                        (0 until missedIngredients.length()).any {
-                            missedIngredients.getJSONObject(it).getString("name").contains(allergen, true)
-                        }
-            }
-
-            // Allergen warning text
-            val allergenWarning = if (allergensFound.isNotEmpty()) {
-                "\n⚠ Contains known allergens: ${allergensFound.joinToString(", ")}"
-            } else ""
-
-            // Display recipe card
-            val cardView = layoutInflater.inflate(R.layout.card_layout, null)
-            val foodName = cardView.findViewById<TextView>(R.id.foodName)
-            val foodDescription = cardView.findViewById<TextView>(R.id.foodDescription)
-
-            foodName.text = title
-            foodDescription.text = "Ingredients used: ${usedIngredients.length()}${allergenWarning}"
-
-            foodContainer!!.addView(cardView)
         }
     }
 
@@ -205,11 +195,11 @@ class ApiTime : AppCompatActivity() {
                 conn.requestMethod = "GET"
                 conn.setRequestProperty(
                     "x-rapidapi-key",
-                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                    BuildConfig.API_KEY
                 )
                 conn.setRequestProperty(
                     "x-rapidapi-host",
-                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                    BuildConfig.API_HOST
                 )
 
                 // Check if the response code is HTTP OK (200)
@@ -244,13 +234,6 @@ class ApiTime : AppCompatActivity() {
                         ingredientList.append("No ingredients available")
                     }
 
-//                    // Build a list of ingredients
-//                    for (i in 0 until ingredients.length()) {
-//                        val ingredient = ingredients.getJSONObject(i)
-//                        ingredientList.append(ingredient.getString("originalString")).append("\n")
-//                    }
-
-                    // Launch the RecipeDetailActivity to display the details
                     runOnUiThread {
                         val intent = Intent(this, RecipeDetailActivity::class.java)
                         intent.putExtra("recipeTitle", title)
@@ -281,11 +264,11 @@ class ApiTime : AppCompatActivity() {
                 conn.requestMethod = "GET"
                 conn.setRequestProperty(
                     "x-rapidapi-key",
-                    "a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9"
+                    BuildConfig.API_KEY
                 )
                 conn.setRequestProperty(
                     "x-rapidapi-host",
-                    "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+                    BuildConfig.API_HOST
                 )
 
                 val responseCode = conn.responseCode
@@ -363,4 +346,6 @@ class ApiTime : AppCompatActivity() {
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
+
+
 }

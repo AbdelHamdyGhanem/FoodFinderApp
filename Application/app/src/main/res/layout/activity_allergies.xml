@@ -57,7 +57,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:backgroundTint="#009688"
-            android:text="HomePage"
+            android:text="Back"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>

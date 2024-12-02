@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
@@ -18,8 +19,7 @@ class PantryActivity : AppCompatActivity() {
         val pantryListView = findViewById<ListView>(R.id.pantryListView)
         val pantryItems = loadItemsFromFile()
 
-        val adapter =
-            ArrayAdapter(this, R.layout.list_item_pantry, R.id.pantryItemText, pantryItems)
+        val adapter = ItemAdapter(this, pantryItems.toMutableList(), FILE_NAME)
         pantryListView.adapter = adapter
 
 
@@ -34,6 +34,7 @@ class PantryActivity : AppCompatActivity() {
         val buttonFoodPreferences = findViewById<Button>(R.id.button_food_preferences)
         buttonFoodPreferences.setOnClickListener {
             val intent = Intent(this, FoodPrefActivity::class.java)
+            intent.putStringArrayListExtra("foods", ArrayList(pantryItems))
             startActivity(intent)
         }
 

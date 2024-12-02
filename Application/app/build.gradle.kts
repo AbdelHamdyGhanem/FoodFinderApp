@@ -17,6 +17,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -24,6 +28,14 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "API_KEY", "\"a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9\"")
+            buildConfigField("String", "API_HOST", "\"spoonacular-recipe-food-nutrition-v1.p.rapidapi.com\"")
+            buildConfigField("String", "XAPI_KEY", "\"kLB2Kaq64UizpgnzYYxoiQ==fZSjgLIWhOmKqByu\"")
+        }
+        debug {
+            buildConfigField("String", "API_KEY", "\"a2ae691b53msh393e153de705864p186a6cjsnbdf23b779fc9\"")
+            buildConfigField("String", "API_HOST", "\"spoonacular-recipe-food-nutrition-v1.p.rapidapi.com\"")
+            buildConfigField("String", "XAPI_KEY", "\"kLB2Kaq64UizpgnzYYxoiQ==fZSjgLIWhOmKqByu\"")
         }
     }
     compileOptions {

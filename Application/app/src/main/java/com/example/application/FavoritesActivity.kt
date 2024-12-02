@@ -17,14 +17,12 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.util.Properties
 
 class FavoritesActivity : AppCompatActivity() {
 
     private lateinit var favoritesRecyclerView: RecyclerView
     private lateinit var favoritesAdapter: FavoritesAdapter
-    private val favoritesList: MutableList<String> by lazy {
-        intent.getStringArrayListExtra("favoritesList")?.toMutableList() ?: mutableListOf()
-    }
 
     private val sharedPreferences: SharedPreferences by lazy {
         getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -88,7 +86,7 @@ class FavoritesActivity : AppCompatActivity() {
 
                     val conn = url.openConnection() as HttpURLConnection
                     conn.requestMethod = "GET"
-                    conn.setRequestProperty("X-Api-Key", "kLB2Kaq64UizpgnzYYxoiQ==fZSjgLIWhOmKqByu")
+                    conn.setRequestProperty("X-Api-Key", BuildConfig.XAPI_KEY)
 
                     val responseCode = conn.responseCode
                     if (responseCode == HttpURLConnection.HTTP_OK) {
