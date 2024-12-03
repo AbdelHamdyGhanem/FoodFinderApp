@@ -29,6 +29,10 @@ FoodFinder is a versatile mobile application designed to help users manage their
 - Save your favorite recipes for quick access later.
 - View detailed information about saved recipes.
 
+### 6. Allergies List
+- Easily add allergies to a persistent list stored on the device
+- Allergy alerts are included in recipe details.
+
 ## Getting Started
 
 ### Prerequisites
