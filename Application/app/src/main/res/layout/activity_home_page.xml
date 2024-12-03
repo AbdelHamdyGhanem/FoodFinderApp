@@ -29,7 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#009688"
-        android:text="Add Foods" />
+        android:text="Add Foods"
+        android:textColor="@android:color/white" />
+
 
     <Button
         android:id="@+id/button_pantry"
@@ -37,7 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#009688"
-        android:text="Pantry" />
+        android:text="Pantry"
+        android:textColor="@android:color/white" />
+
 
     <Button
         android:id="@+id/button_shopping_list"
@@ -45,7 +49,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#009688"
-        android:text="Shopping List" />
+        android:text="Shopping List"
+        android:textColor="@android:color/white" />
+
 
     <!-- Favorites Button -->
     <Button
@@ -54,6 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#009688"
-        android:text="Favorites" />
+        android:text="Favorites"
+        android:textColor="@android:color/white" />
+
 
 </LinearLayout>
