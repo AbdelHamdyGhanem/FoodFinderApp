@@ -22,17 +22,54 @@ FoodFinder is a versatile mobile application designed to help users manage their
 4. Build and run the app on your device or emulator.
    
 ### Usage
-- Add Items to Pantry:
-	- Use the "Add" button to manually input items.
-	- Tap the microphone icon to add items via voice.
-   
-### Search Recipes:
-- Tap "Search Parameters" to configure your preferences and find recipes.
-- Navigate Between Features:
-	- Use the navigation buttons for Pantry, Home, or Shopping List.
-   
-### Favorite Recipes:
-- Double-tap or tap the heart icon on a recipe to save it to favorites.
+- Add Items to Pantry
+#### Manually Add Items:
+- Tap the "Add" button after entering the desired item in the input field to include it in your pantry.
+#### Voice Recognition:
+- Tap the microphone icon to use voice input for adding items.
+- Example: Say "Add milk and eggs" to automatically include these items in your pantry list.
+#### Search Recipes
+#### Set Preferences:
+- Tap the "Search Parameters" button to configure your recipe search preferences:
+- Specify the number of recipes.
+- Enable or disable options like "Ignore Pantry" and "Maximize Ingredients."
+#### View Results:
+- After setting preferences, browse through recipes tailored to your pantry and preferences. Each recipe displays:
+#### Ingredients.
+- Step-by-step instructions.
+- Nutrition information.
+- Allergy alerts for detected allergens.
+### Navigate Between Features
+#### Pantry:
+- Manage your stored items directly from the Pantry section. Add, edit, or delete items with ease.
+#### Home:
+- Tap the "Home" button to return to the main screen, where you can access all primary features.
+#### Shopping List:
+- Maintain a dedicated Shopping List for items not in your pantry. Switch between features effortlessly using navigation buttons.
+### Favorite Recipes
+#### Save Recipes:
+- Double-tap or click the heart icon on a recipe card to mark it as a favorite.
+#### Access Favorites:
+- View all saved recipes in the Favorites section. Recipes are stored with detailed information for quick access.
+### Additional Use Cases
+- Send Recipes to Friends:
+	- Share recipes directly via supported apps. Tap the "Share" button in a recipe detail view to send the recipe to your friends.
+- Get Grocery Notifications:
+	- Receive notifications when you're near a grocery store, reminding you to buy items from your shopping list.
+(Note: Grocery store locations are hardcoded.)
+- Track Allergens:
+	- View detailed allergy alerts for recipes. Add or remove allergens in your preferences to refine results further.
+- Persistent Storage:
+	- Pantry and Shopping List items are saved locally, ensuring data is preserved across app sessions.
+- Explore Nutrition:
+	- Tap on recipes to explore detailed nutrition facts, helping you plan meals effectively.
+### Pro Tips
+#### Quickly Clear Pantry Items:
+- Use the remove button in the Pantry view to delete unwanted items.
+#### Optimize Recipe Searches:
+- Use Maximize Ingredients to prioritize recipes that utilize more pantry items.
+#### Simplify Lists:
+- Use the Shopping List for items you need, separate from your pantry inventory
 
 ### Technical Details
 - Languages: Kotlin
