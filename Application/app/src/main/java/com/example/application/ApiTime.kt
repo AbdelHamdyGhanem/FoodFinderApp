@@ -21,6 +21,11 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import android.text.SpannableString
+import android.text.Spannable
+import android.text.style.ForegroundColorSpan
+import androidx.core.content.ContextCompat
+
 
 class ApiTime : AppCompatActivity() {
     private var foodContainer: LinearLayout? = null

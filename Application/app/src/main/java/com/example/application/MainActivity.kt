@@ -17,137 +17,92 @@ import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
-    private var AddFood: EditText? = null
-    private var arrayList: ArrayList<String>? = null
-    private lateinit var adapter: FoodAdapter
-    private lateinit var speechRecognizer: SpeechRecognizer
+    private lateinit var addFoodEditText: EditText
     private lateinit var micButton: ImageButton
-    private val RECORD_AUDIO_REQUEST_CODE = 1
-    private val PERMISSION_REQUEST_CODE = 2
-    private val FILE_NAME = "pantry_items.txt"
+    private lateinit var adapter: FoodAdapter
+    private val foodList = ArrayList<String>()
+    private lateinit var speechRecognizer: SpeechRecognizer
+
+    companion object {
+        private const val RECORD_AUDIO_REQUEST_CODE = 1
+        private const val PERMISSION_REQUEST_CODE = 2
+        private const val FILE_NAME = "pantry_items.txt"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        AddFood = findViewById(R.id.AddFood)
-        val buttonAdd = findViewById<Button>(R.id.button_add)
+        addFoodEditText = findViewById(R.id.AddFood)
+        micButton = findViewById(R.id.micButton)
+
+        val addButton = findViewById<Button>(R.id.button_add)
+        val pantryButton = findViewById<Button>(R.id.button_pantry)
+        val homeButton = findViewById<Button>(R.id.button_home)
+        val shoppingListButton = findViewById<Button>(R.id.button_shopping_list)
+        val nextButton = findViewById<Button>(R.id.button_next_foodPref)
         val listView = findViewById<ListView>(R.id.listView)
-        micButton = findViewById(R.id.micButton) // ImageButton for microphone
 
-        // Initialize Pantry Button
-        val buttonPantry = findViewById<Button>(R.id.button_pantry)
-        buttonPantry.setOnClickListener {
-            val intent = Intent(this, PantryActivity::class.java)
-            startActivity(intent)
-        }
-
-        val buttonHome = findViewById<Button>(R.id.button_home)
-        buttonHome.setOnClickListener {
-            // Navigate back to the HomeActivity
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Initialize arrayList
-        arrayList = ArrayList()
-
-        // Initialize the adapter and pass the lambda for onDeleteClick
-        adapter = FoodAdapter(this, R.layout.list_item, arrayList!!) { item ->
+        // Set up the adapter
+        adapter = FoodAdapter(this, R.layout.list_item, foodList) { item ->
             removeFood(item)
         }
         listView.adapter = adapter
 
-        // Set up button click listener for adding food
-        buttonAdd.setOnClickListener { addFood() }
+        // Add button listener
+        addButton.setOnClickListener { addFood() }
 
-        // Request storage permissions
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSION_REQUEST_CODE)
+        // Pantry button listener
+        pantryButton.setOnClickListener {
+            startActivity(Intent(this, PantryActivity::class.java))
         }
 
-        // Set up SpeechRecognizer
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-
-        // Check for microphone permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST_CODE)
+        // Home button listener
+        homeButton.setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
         }
 
+        // Shopping list button listener
+        shoppingListButton.setOnClickListener {
+            startActivity(Intent(this, ShoppingListActivity::class.java))
+        }
+
+        // Next button listener
+        nextButton.setOnClickListener {
+            saveItemsToFile(foodList)
+            val intent = Intent(this, FoodPrefActivity::class.java).apply {
+                putStringArrayListExtra("foods", foodList)
+            }
+            startActivity(intent)
+        }
+
+        // Initialize speech recognizer
+        initializeSpeechRecognizer()
+
+        // Microphone button listener
         micButton.setOnClickListener {
-            startListening() // Start listening for voice input
+            startListening()
         }
 
-        // Button to navigate to ShoppingListActivity
-        val buttonShoppingList = findViewById<Button>(R.id.button_shopping_list)
-        buttonShoppingList.setOnClickListener {
-            val intent = Intent(applicationContext, ShoppingListActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Handle "Next" button
-        val buttonNextFoodPref = findViewById<Button>(R.id.button_next_foodPref)
-        buttonNextFoodPref.setOnClickListener {
-            // Save items to pantry file
-            saveItemsToFile(arrayList!!)
-            // Navigate to PantryActivity
-            val intent = Intent(this, FoodPrefActivity::class.java)
-            intent.putStringArrayListExtra("foods", arrayList)
-            startActivity(intent)
-        }
-
-
+        // Request permissions
+        requestPermissionsIfNeeded()
     }
 
-    // This method is called when the ActionBar back button is clicked
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                finish() // Close MainActivity and return to HomeActivity
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    private fun requestPermissionsIfNeeded() {
+        val permissionsToRequest = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.RECORD_AUDIO)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsToRequest.toTypedArray(), PERMISSION_REQUEST_CODE)
         }
     }
 
-    private fun addFood() {
-        val food = AddFood!!.text.toString().trim()
-
-        if (!food.isBlank() && !arrayList!!.contains(food)) {
-            arrayList!!.add(food)
-            adapter.notifyDataSetChanged()
-            AddFood!!.setText("") // Clear the EditText
-            Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Item is empty or already exists", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun removeFood(item: String) {
-        arrayList!!.remove(item)
-        adapter.notifyDataSetChanged() // Notify adapter to refresh the list
-    }
-
-    private fun saveItemsToFile(items: List<String>) {
-        try {
-            val file = File(filesDir, FILE_NAME)
-            FileOutputStream(file, false).use { output ->
-                items.forEach { item ->
-                    output.write("$item\n".toByteArray())
-                }
-            }
-            Toast.makeText(this, "Items saved to pantry!", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, "Error saving items: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    private fun startListening() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
-
+    private fun initializeSpeechRecognizer() {
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(params: Bundle?) {}
 
@@ -160,13 +115,25 @@ class MainActivity : AppCompatActivity() {
             override fun onEndOfSpeech() {}
 
             override fun onError(error: Int) {
-                Toast.makeText(this@MainActivity, "Error recognizing speech", Toast.LENGTH_SHORT).show()
+                val errorMessage = when (error) {
+                    SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
+                    SpeechRecognizer.ERROR_CLIENT -> "Client-side error"
+                    SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
+                    SpeechRecognizer.ERROR_NETWORK -> "Network error"
+                    SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
+                    SpeechRecognizer.ERROR_NO_MATCH -> "No match found"
+                    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RecognitionService busy"
+                    SpeechRecognizer.ERROR_SERVER -> "Server error"
+                    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
+                    else -> "Unknown error"
+                }
+                Toast.makeText(this@MainActivity, "Speech recognition error: $errorMessage", Toast.LENGTH_SHORT).show()
             }
 
             override fun onResults(results: Bundle?) {
                 val data = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (!data.isNullOrEmpty()) {
-                    AddFood!!.setText(data[0])
+                    addFoodEditText.setText(data[0])
                     addFood()
                 }
             }
@@ -175,12 +142,58 @@ class MainActivity : AppCompatActivity() {
 
             override fun onEvent(eventType: Int, params: Bundle?) {}
         })
+    }
 
+    private fun startListening() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
+        }
         speechRecognizer.startListening(intent)
+    }
+
+    private fun addFood() {
+        val food = addFoodEditText.text.toString().trim()
+        if (food.isNotBlank() && !foodList.contains(food)) {
+            foodList.add(food)
+            adapter.notifyDataSetChanged()
+            addFoodEditText.text.clear()
+            Toast.makeText(this, "Food item added", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Item is empty or already exists", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun removeFood(item: String) {
+        foodList.remove(item)
+        adapter.notifyDataSetChanged()
+        Toast.makeText(this, "Item removed", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun saveItemsToFile(items: List<String>) {
+        try {
+            val file = File(filesDir, FILE_NAME)
+            file.printWriter().use { writer ->
+                items.forEach { item -> writer.println(item) }
+            }
+            Toast.makeText(this, "Items saved to pantry!", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error saving items: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        speechRecognizer.destroy() // Release the recognizer
+        speechRecognizer.destroy()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

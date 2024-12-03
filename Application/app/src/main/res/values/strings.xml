@@ -2,4 +2,7 @@
     <string name="app_name">Application</string>
     <string name="home">Home</string>
     <string name="app_logo"><![CDATA[<string name=\"app_logo\">App Logo</string>\n]]></string>
+    <string name="back_button">Go back</string>
+    <string name="share_button">share</string>
+    <string name="recipe_image_description">image description</string>
 </resources>
