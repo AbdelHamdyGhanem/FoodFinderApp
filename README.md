@@ -71,23 +71,6 @@ FoodFinder is a versatile mobile application designed to help users manage their
 - API Integration: Spoonacular API
 - Data Storage: Local file storage using Android's filesDir
 - UI Framework: ConstraintLayout, ListView, and Custom Adapters
-  
-### Known Issues
-#### Speech Recognition Errors:
-- Ensure the app has the necessary microphone permissions.
-- Some devices may require additional configuration for speech services.
-  
-#### Performance Lag:
-- Rendering delays may occur on older devices when loading large data sets.
-
-#### Recipe information:
-- Ingredient quantities not shown on recipe cards
-
-#### Recipe Details API Returns Null for Instructions
-- The recipe details search API occasionally returns null values for the instructions field. This behavior is likely due to regional variations in recipe names, where the API might fail to locate the exact recipe name in its database
-
-#### Nutrition Data API Returns Null for Protein Values
-- The nutrition data API sometimes returns null values for the protein field. This occurs when the database lacks calculated or available protein values for certain recipes.
 
 ---
 
@@ -152,3 +135,14 @@ FoodFinder is a versatile mobile application designed to help users manage their
 	- Notifies users when they are near a grocery store, suggesting items from their shopping list.
 Note: Grocery store locations are hard-coded due to the lack of a free location API. Users can disable this feature by rolling back to a previous commit.
 - Explore additional API integrations for enhanced location services and recipe features.
+#### Speech Recognition Errors:
+- Ensure the app has the necessary microphone permissions.
+- Some devices may require additional configuration for speech services.  
+#### Performance Lag:
+- Rendering delays may occur on older devices when loading large data sets.
+#### Recipe information:
+- Ingredient quantities not shown on recipe cards
+#### Recipe Details API Returns Null for Instructions
+- The recipe details search API occasionally returns null values for the instructions field. This behavior is likely due to regional variations in recipe names, where the API might fail to locate the exact recipe name in its database
+#### Nutrition Data API Returns Null for Protein Values
+- The nutrition data API sometimes returns null values for the protein field. This occurs when the database lacks calculated or available protein values for certain recipes.
